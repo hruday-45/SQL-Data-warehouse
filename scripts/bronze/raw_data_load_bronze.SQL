@@ -33,10 +33,10 @@ BEGIN
 		BULK INSERT bronze.csv_olist_customers_dataset
 		FROM 'C:\SQL project\Client Data Sheet\olist_customers_dataset.csv'
 		WITH (
-			FIRSTROW		    = 2,
+			FIRSTROW		= 2,
 			FIELDTERMINATOR = ',',
-			FIELDQUOTE		  = '"',
-  		ROWTERMINATOR   = '0x0a',
+			FIELDQUOTE		= '"',
+  		    ROWTERMINATOR   = '0x0a',
 			TABLOCK
 		);
 		SET @end_time = GETDATE();
@@ -51,10 +51,10 @@ BEGIN
 		BULK INSERT bronze.csv_olist_geolocation_dataset
 		FROM 'C:\SQL project\Client Data Sheet\olist_geolocation_dataset.csv'
 		WITH (
-			FIRSTROW		    = 2,
+			FIRSTROW		= 2,
 			FIELDTERMINATOR = ',',
-			FIELDQUOTE		  = '"',
-			ROWTERMINATOR	  = '0x0a',
+			FIELDQUOTE		= '"',
+			ROWTERMINATOR	= '0x0a',
 			TABLOCK
 		);
 		SET @end_time = GETDATE();
@@ -69,10 +69,10 @@ BEGIN
 		BULK INSERT bronze.csv_olist_order_items_dataset
 		FROM 'C:\SQL project\Client Data Sheet\olist_order_items_dataset.csv'
 		WITH (
-			FIRSTROW		    = 2,
+			FIRSTROW		= 2,
 			FIELDTERMINATOR = ',',
-			FIELDQUOTE		  = '"',
-			ROWTERMINATOR	  = '0x0a',
+			FIELDQUOTE		= '"',
+			ROWTERMINATOR	= '0x0a',
 			TABLOCK
 		);
 		SET @end_time = GETDATE();
@@ -87,10 +87,10 @@ BEGIN
 		BULK INSERT bronze.csv_olist_order_payments_dataset
 		FROM 'C:\SQL project\Client Data Sheet\olist_order_payments_dataset.csv'
 		WITH (
-			FIRSTROW		    = 2,
+			FIRSTROW		= 2,
 			FIELDTERMINATOR = ',',
-			FIELDQUOTE		  = '"',
-			ROWTERMINATOR	  = '0x0a',
+			FIELDQUOTE		= '"',
+			ROWTERMINATOR	= '0x0a',
 			TABLOCK
 		);
 		SET @end_time = GETDATE();
@@ -105,10 +105,10 @@ BEGIN
 		BULK INSERT bronze.csv_olist_order_reviews_dataset
 		FROM 'C:\SQL project\Client Data Sheet\olist_order_reviews_dataset.csv'
 		WITH (
-			FIRSTROW		    = 2,
+			FIRSTROW		= 2,
 			FIELDTERMINATOR = ',',
-			FIELDQUOTE		  = '"',
-			ROWTERMINATOR	  = '0x0a',
+			FIELDQUOTE		= '"',
+			ROWTERMINATOR	= '0x0a',
 			TABLOCK
 		);
 		SET @end_time = GETDATE();
@@ -123,10 +123,10 @@ BEGIN
 		BULK INSERT bronze.csv_olist_orders_dataset
 		FROM 'C:\SQL project\Client Data Sheet\olist_orders_dataset.csv'
 		WITH (
-			FIRSTROW		    = 2,
+			FIRSTROW		= 2,
 			FIELDTERMINATOR = ',',
-			FIELDQUOTE		  = '"',
-			ROWTERMINATOR	  = '0x0a',
+			FIELDQUOTE		= '"',
+			ROWTERMINATOR	= '0x0a',
 			TABLOCK
 		);
 		SET @end_time = GETDATE();
@@ -141,10 +141,10 @@ BEGIN
 		BULK INSERT bronze.csv_olist_products_dataset
 		FROM 'C:\SQL project\Client Data Sheet\olist_products_dataset.csv'
 		WITH (
-			FIRSTROW		    = 2,
+			FIRSTROW		= 2,
 			FIELDTERMINATOR = ',',
-			FIELDQUOTE		  = '"',
-			ROWTERMINATOR	  = '0x0a',
+			FIELDQUOTE		= '"',
+			ROWTERMINATOR	= '0x0a',
 			TABLOCK
 		);
 		SET @end_time = GETDATE();
@@ -159,10 +159,10 @@ BEGIN
 		BULK INSERT bronze.csv_olist_sellers_dataset
 		FROM 'C:\SQL project\Client Data Sheet\olist_sellers_dataset.csv'
 		WITH (
-			FIRSTROW		    = 2,
+			FIRSTROW		= 2,
 			FIELDTERMINATOR = ',',
-			FIELDQUOTE		  = '"',
-			ROWTERMINATOR	  = '0x0a',
+			FIELDQUOTE		= '"',
+			ROWTERMINATOR	= '0x0a',
 			TABLOCK
 		);
 		SET @end_time = GETDATE();
@@ -177,10 +177,10 @@ BEGIN
 		BULK INSERT bronze.csv_product_category_name_translation
 		FROM 'C:\SQL project\Client Data Sheet\product_category_name_translation.csv'
 		WITH (
-			FIRSTROW		    = 2,
+			FIRSTROW		= 2,
 			FIELDTERMINATOR = ',',
-			FIELDQUOTE		  = '"',
-			ROWTERMINATOR	  = '0x0a',
+			FIELDQUOTE		= '"',
+			ROWTERMINATOR	= '0x0a',
 			TABLOCK
 		);
 		SET @end_time = GETDATE();
