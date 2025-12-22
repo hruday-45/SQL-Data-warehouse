@@ -1,0 +1,198 @@
+/*
+===============================================================================
+DDL Script: Create Gold Views
+===============================================================================
+Script Purpose:
+    This script creates views for the Gold layer in the data warehouse.
+    The Gold layer represents the final dimension and fact tables (Star Schema)
+
+    Each view performs transformations and combines data from the Silver layer
+    to produce a clean, enriched, and business-ready dataset.
+
+Usage:
+    - These views can be queried directly for analytics and reporting.
+================================================================================
+*/
+
+--  =================================================================
+--  Create Dimension Table: gold.dim_products
+--  =================================================================
+
+
+IF OBJECT_ID('gold.dim_customers', 'V') IS NOT NULL
+DROP VIEW gold.dim_customers;
+GO
+
+CREATE VIEW gold.dim_customers AS
+	SELECT 
+		ROW_NUMBER() OVER(ORDER BY customer_unique_id) AS customer_key,
+		ci.customer_unique_id,
+		ci.customer_id,
+		ci.customer_city,
+		ci.customer_state,
+		ci.customer_zip_code_prefix AS customer_zipcode,
+		gi.geolocation_lat AS latitude,
+		gi.geolocation_lng AS longitude
+	FROM silver.customers_info ci
+	LEFT JOIN silver.geolocation_info gi
+	ON ci.customer_zip_code_prefix = gi.geolocation_zip_code_prefix;
+GO
+
+--  =====================================================================
+--  Create Dimension Table: gold.dim_orders
+--  =====================================================================
+
+IF OBJECT_ID('gold.dim_orders', 'V') IS NOT NULL
+DROP VIEW gold.dim_orders;
+GO
+
+CREATE VIEW gold.dim_orders AS
+WITH payments_info AS (
+	SELECT 
+        order_id,
+        SUM(payment_value) AS total_amount_paid,
+        MAX(payment_installments) AS max_installments,
+        COUNT(payment_sequential) AS payment_methods_count
+    FROM silver.order_payments
+    GROUP BY order_id),
+	
+	review_info AS (
+	SELECT
+		order_id,
+		CAST(AVG(CAST(review_score AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS avg_review_score
+		FROM silver.order_reviews
+		GROUP BY order_id)
+
+SELECT
+	ROW_NUMBER() OVER(ORDER BY oi.order_id) AS order_key,
+	oi.order_id,
+	oi.customer_id,
+	ISNULL(ri.avg_review_score, 0) AS avg_review_score,
+	pa.payment_methods_count,
+	ISNULL(pa.total_amount_paid, 0) AS total_amount_paid,
+	FORMAT(oi.order_purchase_timestamp, 'yyyy-MM-dd HH:mm') AS purchase_date,
+	FORMAT(oi.order_delivered_customer_date, 'yyyy-MM-dd HH:mm') AS delivered_date,
+	FORMAT(oi.order_estimated_delivery_date, 'yyyy-MM-dd HH:mm') AS delivery_estimated_date,
+	DATEDIFF(day, oi.order_purchase_timestamp, oi.order_delivered_customer_date) AS actual_delivered_days,
+	CASE WHEN oi.order_delivered_customer_date > oi.order_estimated_delivery_date THEN 1 ELSE 0 END AS late_delivery,
+	oi.order_status
+FROM silver.orders_info oi
+LEFT JOIN payments_info pa
+ON oi.order_id = pa.order_id
+LEFT JOIN review_info ri
+ON oi.order_id = ri.order_id;
+GO
+
+--  ======================================================================
+--  Create Dimension Table: gold.dim_products
+--  ======================================================================
+
+IF OBJECT_ID('gold.dim_products', 'V') IS NOT NULL
+DROP VIEW gold.dim_products;
+GO
+
+CREATE VIEW gold.dim_products AS
+SELECT 
+	ROW_NUMBER() OVER (ORDER BY product_id) AS product_key,
+	p.product_id,
+	ISNULL(pn.product_category_name_english, 'others') AS category_name,
+	CAST(ISNULL(p.product_weight_g, 0)/ 1000.0 AS DECIMAL(10,3)) AS weight_kg,
+	ISNULL(p.product_name_length, 0) AS name_length,
+	CASE WHEN p.product_description_lenght IS NULL OR p.product_description_lenght = 0 THEN 'No Details'
+		 WHEN p.product_description_lenght < 200 THEN 'Low'
+		 WHEN p.product_description_lenght BETWEEN 200 AND 1000 THEN 'Standard'
+		 ELSE 'High'
+	END AS description_quality,
+	ISNULL(p.product_photos_qty, 0) AS photos_quantity,
+	(p.product_width_cm * p.product_length_cm * product_height_cm) AS volume_cm3
+FROM silver.products_info p
+LEFT JOIN silver.product_category_name_translation pn
+ON p.product_category_name = pn.product_category_name;
+GO
+
+--  ===================================================================
+--  Create Dimension Table: gold.dim_sellers
+--  ===================================================================
+
+IF OBJECT_ID('gold.dim_sellers', 'V') IS NOT NULL
+DROP VIEW gold.dim_sellers;
+GO
+
+CREATE VIEW gold.dim_sellers AS
+SELECT 
+	ROW_NUMBER() OVER(ORDER BY seller_id) AS seller_key,
+	s.seller_id,	
+	s.seller_city AS city,
+	s.seller_state AS state,
+	s.seller_zip_code_prefix AS zip_code,
+	gi.geolocation_lat AS latitude,
+	gi.geolocation_lng AS longitude
+FROM silver.sellers_info s
+LEFT JOIN silver.geolocation_info gi
+ON s.seller_zip_code_prefix = gi.geolocation_zip_code_prefix;
+GO
+
+--  ===================================================================
+--  Create Fact Table: gold.fact_payments
+--  ===================================================================
+
+IF OBJECT_ID('gold.fact_payments', 'V') IS NOT NULL
+DROP VIEW gold.fact_payments;
+GO
+
+CREATE VIEW gold.fact_payments AS
+SELECT 
+    order_id,
+    payment_sequential,
+    payment_type,
+    payment_installments,
+    CAST(payment_value AS DECIMAL(10,2)) AS payment_amount
+FROM silver.order_payments;
+GO
+
+--  ====================================================================
+--  Create Fact Table: gold.fact_reviews
+--  ====================================================================
+
+IF OBJECT_ID('gold.fact_reviews', 'V') IS NOT NULL
+DROP VIEW gold.fact_reviews;
+GO
+
+CREATE VIEW gold.fact_reviews AS
+SELECT 
+    review_id,
+    order_id,
+    CAST(review_score AS INT) AS review_score,
+    review_comment_title,
+    review_comment_message,
+    review_creation_date,
+    review_answer_timestamp
+FROM silver.order_reviews;
+GO
+
+--  ======================================================================
+--  Create Fact Table: gold.fact_sales
+--  ======================================================================
+
+IF OBJECT_ID('gold.fact_sales', 'V') IS NOT NULL
+DROP VIEW gold.fact_sales;
+GO
+
+CREATE VIEW gold.fact_sales AS
+SELECT 
+	oi.order_id,
+	oi.order_item_id AS order_sequence_no,
+	oi.product_id,
+	FORMAT(oi.shipping_limit_date, 'yyyy-MM-dd HH:mm') AS shipping_limit_date,
+	CAST(oi.price AS DECIMAL(10,2)) AS price,
+	CAST(oi.freight_value AS DECIMAL(10,2)) AS freight_value,
+	CAST(oi.total_value AS DECIMAL(10,2)) AS total_value,
+	oi.seller_id,
+	o.customer_id
+FROM silver.order_items oi
+LEFT JOIN silver.orders_info o
+ON oi.order_id = o.order_id;
+GO
+
+--  ========================================================================
+    
