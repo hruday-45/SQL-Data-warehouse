@@ -26,12 +26,12 @@ BEGIN
 		PRINT '==========================================================';
 
 		SET @start_time = GETDATE();
-		PRINT '---> Truncating Table: bronze.customers_info';
-		TRUNCATE TABLE bronze.customers_info;
+		PRINT '---> Truncating Table: bronze.olist_customers_dataset';
+		TRUNCATE TABLE bronze.olist_customers_dataset;
 
-		PRINT '---> Inserting Data Info: bronze.customers_info';
-		BULK INSERT bronze.customers_info
-		FROM 'C:\SQL project\Client Data Sheet\customers_info.csv'
+		PRINT '---> Inserting Data Info: bronze.olist_customers_dataset';
+		BULK INSERT bronze.olist_customers_dataset
+		FROM 'C:\SQL project\Client Data Sheet\olist_customers_dataset.csv'
 		WITH(
 			FORMAT			= 'CSV',
 			FIRSTROW		= 2,
@@ -46,12 +46,12 @@ BEGIN
 		PRINT '-------------------------------------------------------------'
 
 		SET @start_time = GETDATE();
-		PRINT '---> Truncating Table: bronze.geolocation_info';
-		TRUNCATE TABLE bronze.geolocation_info;
+		PRINT '---> Truncating Table: bronze.olist_geolocation_dataset';
+		TRUNCATE TABLE bronze.olist_geolocation_dataset;
 
-		PRINT '---> Inserting Data Info: bronze.geolocation_info';
-		BULK INSERT bronze.geolocation_info
-		FROM 'C:\SQL project\Client Data Sheet\geolocation_info.csv'
+		PRINT '---> Inserting Data Info: bronze.olist_geolocation_dataset';
+		BULK INSERT bronze.olist_geolocation_dataset
+		FROM 'C:\SQL project\Client Data Sheet\olist_geolocation_dataset.csv'
 		WITH(
 			FORMAT			= 'CSV',
 			FIRSTROW		= 2,
@@ -66,12 +66,12 @@ BEGIN
 		PRINT '-------------------------------------------------------------'
 
 		SET @start_time = GETDATE();
-		PRINT '---> Truncating Table: bronze.order_items';
-		TRUNCATE TABLE bronze.order_items;
+		PRINT '---> Truncating Table: bronze.olist_order_items_dataset';
+		TRUNCATE TABLE bronze.olist_order_items_dataset;
 
-		PRINT '---> Inserting Data Info: bronze.order_items';
-		BULK INSERT bronze.order_items
-		FROM 'C:\SQL project\Client Data Sheet\order_items.csv'
+		PRINT '---> Inserting Data Info: bronze.olist_order_items_dataset';
+		BULK INSERT bronze.olist_order_items_dataset
+		FROM 'C:\SQL project\Client Data Sheet\olist_order_items_dataset.csv'
 		WITH(
 			FORMAT			= 'CSV',
 			FIRSTROW		= 2,
@@ -86,12 +86,12 @@ BEGIN
 		PRINT '-------------------------------------------------------------'
 
 		SET @start_time = GETDATE();
-		PRINT '---> Truncating Table: bronze.order_payments';
-		TRUNCATE TABLE bronze.order_payments;
+		PRINT '---> Truncating Table: bronze.olist_order_payments_dataset';
+		TRUNCATE TABLE bronze.olist_order_payments_dataset;
 
-		PRINT '---> Inserting Data Info: bronze.order_payments';
-		BULK INSERT bronze.order_payments
-		FROM 'C:\SQL project\Client Data Sheet\order_payments.csv'
+		PRINT '---> Inserting Data Info: bronze.olist_order_payments_dataset';
+		BULK INSERT bronze.olist_order_payments_dataset
+		FROM 'C:\SQL project\Client Data Sheet\olist_order_payments_dataset.csv'
 		WITH(
 			FORMAT			= 'CSV',
 			FIRSTROW		= 2,
@@ -106,12 +106,12 @@ BEGIN
 		PRINT '-------------------------------------------------------------'
 
 		SET @start_time = GETDATE();
-		PRINT '---> Truncating Table: bronze.order_reviews';
-		TRUNCATE TABLE bronze.order_reviews;
+		PRINT '---> Truncating Table: bronze.olist_order_reviews_dataset';
+		TRUNCATE TABLE bronze.olist_order_reviews_dataset;
 
-		PRINT '---> Inserting Data Info: bronze.order_reviews';
-		BULK INSERT bronze.order_reviews
-		FROM 'C:\SQL project\Client Data Sheet\order_reviews.csv'
+		PRINT '---> Inserting Data Info: bronze.olist_order_reviews_dataset';
+		BULK INSERT bronze.olist_order_reviews_dataset
+		FROM 'C:\SQL project\Client Data Sheet\olist_order_reviews_dataset.csv'
 		WITH(
 		    FORMAT			= 'CSV',
 			FIRSTROW		= 2,
@@ -126,12 +126,12 @@ BEGIN
 		PRINT '-------------------------------------------------------------'
 
 		SET @start_time = GETDATE();
-		PRINT '---> Truncating Table: bronze.orders_info';
-		TRUNCATE TABLE bronze.orders_info;
+		PRINT '---> Truncating Table: bronze.olist_orders_dataset';
+		TRUNCATE TABLE bronze.olist_orders_dataset;
 
-		PRINT '---> Inserting Data Info: bronze.orders_info';
-		BULK INSERT bronze.orders_info
-		FROM 'C:\SQL project\Client Data Sheet\orders_info.csv'
+		PRINT '---> Inserting Data Info: bronze.olist_orders_dataset';
+		BULK INSERT bronze.olist_orders_dataset
+		FROM 'C:\SQL project\Client Data Sheet\olist_orders_dataset.csv'
 		WITH(
 			FORMAT			= 'CSV',
 			FIRSTROW		= 2,
@@ -146,12 +146,12 @@ BEGIN
 		PRINT '-------------------------------------------------------------'
 
 		SET @start_time = GETDATE();
-		PRINT '---> Truncating Table: bronze.products_info';
-		TRUNCATE TABLE bronze.products_info;
+		PRINT '---> Truncating Table: bronze.olist_products_dataset';
+		TRUNCATE TABLE bronze.olist_products_dataset;
 
-		PRINT '---> Inserting Data Info: bronze.products_info';
-		BULK INSERT bronze.products_info
-		FROM 'C:\SQL project\Client Data Sheet\products_info.csv'
+		PRINT '---> Inserting Data Info: bronze.olist_products_dataset';
+		BULK INSERT bronze.olist_products_dataset
+		FROM 'C:\SQL project\Client Data Sheet\olist_products_dataset.csv'
 		WITH(
 			FORMAT			= 'CSV',
 			FIRSTROW		= 2,
@@ -166,12 +166,12 @@ BEGIN
 		PRINT '-------------------------------------------------------------'
 
 		SET @start_time = GETDATE();
-		PRINT '---> Truncating Table: bronze.sellers_info';
-		TRUNCATE TABLE bronze.sellers_info;
+		PRINT '---> Truncating Table: bronze.olist_sellers_dataset';
+		TRUNCATE TABLE bronze.olist_sellers_dataset;
 
-		PRINT '---> Inserting Data Info:bronze.sellers_info';
-		BULK INSERT bronze.sellers_info
-		FROM 'C:\SQL project\Client Data Sheet\sellers_info.csv'
+		PRINT '---> Inserting Data Info:bronze.olist_sellers_dataset';
+		BULK INSERT bronze.olist_sellers_dataset
+		FROM 'C:\SQL project\Client Data Sheet\olist_sellers_dataset.csv'
 		WITH(
 			FORMAT			= 'CSV',
 			FIRSTROW		= 2,
@@ -217,3 +217,7 @@ BEGIN
 		PRINT '=========================================================================';
 	END CATCH
 END;
+
+--  ==========================================================
+--  EXEC bronze.load_bronze
+--  ==========================================================
