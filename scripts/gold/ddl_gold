@@ -19,6 +19,11 @@ Usage:
 --  =================================================================
 
 
+--  =================================================================
+--  Create Dimension Table: gold.dim_products
+--  =================================================================
+
+
 IF OBJECT_ID('gold.dim_customers', 'V') IS NOT NULL
 DROP VIEW gold.dim_customers;
 GO
@@ -133,6 +138,37 @@ ON s.seller_zip_code_prefix = gi.geolocation_zip_code_prefix;
 GO
 
 --  ===================================================================
+--  Create Dimension Table: gold.dim_date
+--  ===================================================================
+
+IF OBJECT_ID('gold.dim_date', 'V') IS NOT NULL
+DROP VIEW gold.dim_date;
+GO
+
+CREATE VIEW gold.dim_date AS
+WITH date_series AS (
+	SELECT DISTINCT
+	CAST(order_purchase_timestamp AS DATE) AS purchase_date
+	FROM silver.orders_info)
+
+SELECT
+	ROW_NUMBER() OVER(ORDER BY purchase_date) AS purchase_date_key,
+	purchase_date,
+	DATEPART(YEAR, purchase_date) AS year,
+	DATEPART(QUARTER, purchase_date) AS quarter_number,
+	'Q' + CAST(DATEPART(QUARTER, purchase_date) AS NVARCHAR) AS quarter_name,
+	DATEPART(MONTH, purchase_date) AS purchase_month,
+	DATENAME(MONTH, purchase_date) AS month_name,
+	FORMAT(purchase_date, 'yyyy-MM') AS year_month,
+	DATEPART(WEEK, purchase_date) AS week_of_year,
+	DATEPART(DAY, purchase_date) AS day_number,
+	DATENAME(WEEKDAY, purchase_date) AS day_of_week,
+	DATEPART(WEEKDAY, purchase_date) AS weekday_sort,
+	CASE WHEN DATEPART(WEEKDAY, purchase_date) IN (1, 7) THEN 1 ELSE 0 END AS is_weekend
+FROM date_series;
+GO
+
+--  ===================================================================
 --  Create Fact Table: gold.fact_payments
 --  ===================================================================
 
@@ -165,8 +201,8 @@ SELECT
     CAST(review_score AS INT) AS review_score,
     review_comment_title,
     review_comment_message,
-    review_creation_date,
-    review_answer_timestamp
+    FORMAT(review_creation_date, 'yyyy-MM-dd HH:mm') AS review_creation_date,
+    FORMAT(review_answer_timestamp, 'yyyy-MM-dd HH:mm') AS review_answer_timestamp
 FROM silver.order_reviews;
 GO
 
@@ -182,17 +218,16 @@ CREATE VIEW gold.fact_sales AS
 SELECT 
 	oi.order_id,
 	oi.order_item_id AS order_sequence_no,
+	oi.seller_id,
+	o.customer_id,
 	oi.product_id,
-	FORMAT(oi.shipping_limit_date, 'yyyy-MM-dd HH:mm') AS shipping_limit_date,
 	CAST(oi.price AS DECIMAL(10,2)) AS price,
 	CAST(oi.freight_value AS DECIMAL(10,2)) AS freight_value,
 	CAST(oi.total_value AS DECIMAL(10,2)) AS total_value,
-	oi.seller_id,
-	o.customer_id
+	FORMAT(oi.shipping_limit_date, 'yyyy-MM-dd HH:mm') AS shipping_limit_date
 FROM silver.order_items oi
 LEFT JOIN silver.orders_info o
 ON oi.order_id = o.order_id;
 GO
 
 --  ========================================================================
-    
