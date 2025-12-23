@@ -47,7 +47,7 @@ BEGIN
             CAST(TRIM(customer_zip_code_prefix) AS INT) AS customer_zip_code_prefix,
             silver.fn_cap_city_names (customer_city) AS customer_city,
             silver.fn_states_fullnames (customer_state) AS customer_state
-        FROM bronze.customers_info;
+        FROM bronze.olist_customers_dataset;
 
         SET @end_time = GETDATE();
 
@@ -73,7 +73,7 @@ BEGIN
             CAST(AVG(CAST(geolocation_lng AS DECIMAL(18,10))) AS DECIMAL(9,6)) AS geolocation_lng,
             MAX(silver.fn_cap_city_names(geolocation_city)) AS geolocation_city,
             MAX(silver.fn_states_fullnames(geolocation_state)) AS geolocation_state
-        FROM bronze.geolocation_info
+        FROM bronze.olist_geolocation_dataset
         GROUP BY geolocation_zip_code_prefix;
 
         SET @end_time = GETDATE();
@@ -104,7 +104,7 @@ BEGIN
             CAST(TRIM(shipping_limit_date) AS DATETIME2) AS shipping_limit_date,
             CAST(price AS DECIMAL(10,2)) AS price,
             CAST(freight_value AS DECIMAL(10,2)) AS freight_value
-        FROM bronze.order_items;
+        FROM bronze.olist_order_items_dataset;
 
         SET @end_time = GETDATE();
 
@@ -136,7 +136,7 @@ BEGIN
 	        END AS payment_type,
         CAST(payment_installments AS INT) AS payment_installments,
         CAST(payment_value AS DECIMAL(10,2)) AS payment_value
-        FROM bronze.order_payments;
+        FROM bronze.olist_order_payments_dataset;
 
         SET @end_time = GETDATE();
 
@@ -166,7 +166,7 @@ BEGIN
 	        ISNULL(review_comment_message, 'N/A') AS review_comment_message,
 	        CAST(review_creation_date AS DATETIME2) AS review_creation_date,
 	        CAST(review_answer_timestamp AS DATETIME2) AS review_answer_timestamp
-        FROM bronze.order_reviews;
+        FROM bronze.olist_order_reviews_dataset;
 
         SET @end_time = GETDATE();
 
@@ -198,7 +198,7 @@ BEGIN
             CAST(order_delivered_carrier_date AS DATETIME2) AS order_delivered_carrier_date,
             CAST(order_delivered_customer_date AS DATETIME2) AS order_delivered_customer_date,
             CAST(order_estimated_delivery_date AS DATETIME2) AS order_estimated_delivery_date
-        FROM bronze.orders_info;
+        FROM bronze.olist_orders_dataset;
 
         SET @end_time = GETDATE();
 
@@ -259,7 +259,7 @@ BEGIN
             CAST(B.product_length_cm AS INT),
             CAST(B.product_height_cm AS INT),
             CAST(B.product_width_cm AS INT)
-        FROM bronze.products_info B
+        FROM bronze.olist_products_dataset B
         LEFT JOIN silver.product_category_name_translation T
             ON B.product_category_name = T.product_category_name;
 
@@ -285,7 +285,7 @@ BEGIN
 	        CAST(seller_zip_code_prefix AS INT) AS seller_zip_code_prefix,
 	        TRIM(silver.fn_cap_city_names(seller_city)) AS seller_city,
 	        TRIM(silver.fn_states_fullnames(seller_state)) AS seller_state
-        FROM bronze.sellers_info;
+        FROM bronze.olist_sellers_dataset;
 
         SET @end_time = GETDATE();
 
@@ -299,3 +299,8 @@ BEGIN
         PRINT '==================================================================';
     END CATCH
 END;
+
+
+--  =================================================================================
+--  EXEC silver.load_silver
+--  =================================================================================
