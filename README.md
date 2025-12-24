@@ -1,48 +1,96 @@
-# SQL Data Warehouse
+# 🏛️ SQL Data Warehouse: End-to-End E-Commerce Analytics
 
-Welcome to the **Data Warehouse and Analytics Project** repository!
-This project demonstrates a comprehensive data warehousing and analytics solution, from building a data warehouse to generate actionable insights. Designed as a portfolio project, this highlights industry best practices in data engineering and analytics.
-
-----
-
-## Project Overview
-
-### Building the Data Warehouse (Data Engineering)
-
-#### Objectives
-Develop a modern data warehouse using SQL Server to consolidate sales data, enabling analytical reporting and informed decision-making.
-
-#### Specifications
-- **Data Sources**: Import data from two source systems (ERP & CRM) provided as CSV files.
-- **Data Quality**: Cleanse and resolve data quality issues prior to analysis.
-- **Integration**: Combine both sources into a single, user-friendly data model designed for analytical queries.
-- **Scope**: Focus on the latest dataset only; historization of data is not required.
-- **Documentation**: Provide clear documentation of the data model to support both business stakeholders and analytics teams.
+Welcome to the **Data Warehouse and Analytics Project** repository! 
+This project demonstrates a comprehensive data warehousing and analytics solution, from building a robust pipeline to generating actionable business insights. Designed as a portfolio highlight, it showcases industry best practices in data engineering and SQL-based analytics.
 
 ----
 
-### BI: Analytics & Reporting (Data Analytics)
+## 🎯 Project Overview
 
-#### Objective
-Develop SQL-based analytics to deliver detailed insights into:
-- **Customer Behaviour**
-- **Product performance**
-- **Sales Trends**
+### 🛠️ Building the Data Warehouse (Data Engineering)
+**Objective:** Develop a modern data warehouse using **SQL Server** to consolidate sales data, enabling analytical reporting and informed decision-making.
 
-These insights empower stakeholder with key business metrics, enabling strategic decision-making.
+* **Data Sources:** CSV flat files.
+* **Data Quality:** Systematic cleansing and anomaly resolution.
+* **Integration:** Star Schema architecture for high-performance analytical queries.
+* **Scope:** Latest-state snapshot (non-historized) for streamlined reporting.
+* **Documentation:** Comprehensive technical mapping for business and tech stakeholders.
+
+### 📈 BI: Analytics & Reporting (Data Analytics)
+**Objective:** Develop SQL-based analytics to deliver deep-dive insights into:
+* **Customer Behavior** (Segmentation & Lifecycle)
+* **Product Performance** (Revenue & Volume analysis)
+* **Sales Trends** (Temporal growth patterns)
 
 ----
-## Data Architecture
-The data architecture for this project follows Medallion Architecture Bronze, Silver, and Gold layers.
-<img width="936" height="583" alt="data_architecture" src="https://github.com/user-attachments/assets/82fe4f77-b649-48db-80a2-c44fcc90f764" />
-- **1. Bronze Layer**: Stores raw data as-is from the source systems. Data is ingested from CSV files into SQl Server Database.
-- **2. Silver Layer**: This layer includes data cleansing, standardization, and normalization processes to prepare data for analysis.
-- **3. Gold Layer**: Houses business-ready data model into a star schema required for reporting and analytics.
+
+## 🏗️ Data Architecture
+This project implements the **Medallion Architecture**, progressing through Bronze, Silver, and Gold layers to ensure data reliability.
 
 
-## License
-This project is licensed under the (MIT License). You are free to use, modify and share this project with proper attribution.
 
-## About Me
-Hi there! I'm **Hruday Bhaskar Madanu**. I'm a B.Com (CA) graduate from Gauthami Degree College under Osmania University. I worked as a Trust & Safety Associate at Accenture for 1.5 years. I wanted to build my career in the data analytics feild, as my interests are aligned with it.
+1.  **🥉 Bronze Layer:** Immutable landing zone. Raw data ingested "as-is" from CSV sources.
+2.  **🥈 Silver Layer:** The refinery. Data cleansing, standardization, and normalization.
+3.  **🥇 Gold Layer:** Business-ready zone. Optimized **Star Schema** utilizing SQL Views for reporting.
 
+----
+
+# 🛒 Olist E-Commerce Analytics Hub
+
+## 📊 Dataset Overview
+* **Source:** [Olist E-Commerce Public Dataset on Kaggle](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
+* **Context:** Real commercial data from **100,000 orders** (2016–2018) in Brazil.
+* **Structure:** 9 interconnected tables forming a robust relational schema.
+
+---
+
+## 💎 Data Quality & "Gold Standard" Highlights
+During the Silver-to-Gold transition, the following "Perfectionist" audits were performed:
+
+### 🔗 1. Referential Integrity (Zero-Orphan Rule)
+* **Status:** 100% Certified ✅
+* **Metric:** 0 orphaned records across `fact_sales`, `fact_payments`, and `fact_reviews`.
+* **Win:** Every transaction is perfectly attributed to a valid product and seller.
+
+### 🌍 2. Geospatial Precision
+* **Status:** Hardened 📍
+* **Implementation:** Upgraded coordinates to `DECIMAL(9,6)`.
+* **Win:** Resolved Brazilian coordinate truncation and filtered out-of-bounds geographic outliers for accurate mapping.
+
+### ⏳ 3. Temporal Continuity
+* **Status:** Verified 📅
+* **Metric:** 0 gaps in the `dim_date` timeline.
+* **Win:** Used a Recursive CTE to fill a **616-day gap**, ensuring time-series growth metrics (YoY/MoM) are mathematically sound.
+
+### 👤 4. Identity & Deduplication
+* **Status:** Resolved 🧹
+* **Win:** Resolved **2,997 duplicate** IDs using a `ROW_NUMBER()` partitioning strategy to maintain a "Single Source of Truth" for customer addresses.
+
+---
+
+## 📂 Repository Structure
+* `📁 datasets`: Placeholder for raw CSV data.
+* `📁 documents`: Project documentation including **Data Catalog**, **Data Flow**, and **Star Schema** diagrams.
+* `📁 scripts`:
+    * `📁 bronze`: DDLs and Bulk Load scripts for raw ingestion.
+    * `📁 silver`: DDLs and stored procedures for data refinement.
+    * `📁 gold`: DDLs for business-ready Star Schema views.
+* `📁 tests`: Dedicated SQL scripts for **Quality Checks** on the Silver and Gold layers.
+
+---
+
+## ⚖️ License
+This project is licensed under the **MIT License**. You are free to use, modify, and share this project with proper attribution.
+
+---
+
+## 👨‍💻 About Me
+**Hruday Bhaskar Madanu** *Data Analytics Enthusiast | Former Operations Professional*
+
+I am a **B.Com (Computer Applications)** graduate from Gauthami Degree College (Osmania University) with a passion for transforming raw numbers into strategic narratives. 
+
+* **The Transition:** After 1.5 years as a **Trust & Safety Associate at Accenture**, I developed a sharp eye for data patterns and integrity. I am now pivoting my career into **Data Analytics**, bridging my operational experience with technical SQL expertise.
+* **My Philosophy:** I believe data is only as good as its integrity. This project reflects my commitment to building "Gold Standard" data models that businesses can trust implicitly.
+
+**Let's Connect!**
+www.linkedin.com/in/hruday-bhaskar-madanu | hrudaybhaskar45@gmail.com
