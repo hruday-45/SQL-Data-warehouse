@@ -1,9 +1,25 @@
+# 📖 Data Catalog: Olist E-Commerce Dataset
+
+This catalog describes the raw files stored in the `/datasets` (Bronze Layer) directory.
+
+| File Name | Description |
+| :--- | :--- |
+| `olist_customers_dataset.csv` | Information about customers and their locations. |
+| `olist_geolocation_dataset.csv` | Brazilian zip codes with lat/long coordinates. |
+| `olist_order_items_dataset.csv` | Product, price, and freight details for each order. |
+| `olist_order_payments_dataset.csv` | Payment methods, installments, and transaction values. |
+| `olist_order_reviews_dataset.csv` | Customer feedback and satisfaction scores. |
+| `olist_orders_dataset.csv` | The central table linking all order lifecycle events. |
+| `olist_products_dataset.csv` | Product categories, weights, and dimensions. |
+| `olist_sellers_dataset.csv` | Seller location and ID information. |
+
+---
+
+
 # 📊 Gold Layer Data Dictionary
 
 ## Overview
 The **Gold Layer** is the business-level data representation, structured to support analytical and reporting use cases. It consists of dimension tables and fact tables for specific business metrics.
-
----
 
 ## 1. Dimension Tables (The Context)
 
