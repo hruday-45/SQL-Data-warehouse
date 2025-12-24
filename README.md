@@ -93,4 +93,5 @@ I am a **B.Com (Computer Applications)** graduate from Gauthami Degree College (
 * **My Philosophy:** I believe data is only as good as its integrity. This project reflects my commitment to building "Gold Standard" data models that businesses can trust implicitly.
 
 **Let's Connect!**
-www.linkedin.com/in/hruday-bhaskar-madanu | hrudaybhaskar45@gmail.com
+* www.linkedin.com/in/hruday-bhaskar-madanu
+* hrudaybhaskar45@gmail.com
