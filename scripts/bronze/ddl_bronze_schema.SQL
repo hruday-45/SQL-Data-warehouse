@@ -120,4 +120,4 @@ IF OBJECT_ID ('bronze.product_category_name_translation' , 'U') IS NOT NULL
 CREATE TABLE bronze.product_category_name_translation (
 	product_category_name			NVARCHAR(MAX),
 	product_category_name_english	NVARCHAR(MAX)
-););
+);
