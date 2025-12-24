@@ -39,14 +39,16 @@ BEGIN
             customer_unique_id, 
             customer_zip_code_prefix, 
             customer_city, 
-            customer_state)
+            customer_state,
+            state_code)
 
         SELECT 
             TRIM(customer_id) AS customer_id,
             TRIM(customer_unique_id) AS customer_unique_id,
             CAST(TRIM(customer_zip_code_prefix) AS INT) AS customer_zip_code_prefix,
             silver.fn_cap_city_names (customer_city) AS customer_city,
-            silver.fn_states_fullnames (customer_state) AS customer_state
+            silver.fn_states_fullnames (customer_state) AS customer_state,
+            customer_state AS state_code
         FROM bronze.olist_customers_dataset;
 
         SET @end_time = GETDATE();
@@ -65,14 +67,16 @@ BEGIN
             geolocation_lat,
             geolocation_lng,
             geolocation_city,
-            geolocation_state)
+            geolocation_state,
+            state_code)
 
         SELECT  
             CAST(TRIM(geolocation_zip_code_prefix) AS INT) AS geolocation_zip_code_prefix,
-            CAST(AVG(CAST(geolocation_lat AS DECIMAL(18,10))) AS DECIMAL(8,6)) AS geolocation_lat,
+            CAST(AVG(CAST(geolocation_lat AS DECIMAL(18,10))) AS DECIMAL(9,6)) AS geolocation_lat,
             CAST(AVG(CAST(geolocation_lng AS DECIMAL(18,10))) AS DECIMAL(9,6)) AS geolocation_lng,
             MAX(silver.fn_cap_city_names(geolocation_city)) AS geolocation_city,
-            MAX(silver.fn_states_fullnames(geolocation_state)) AS geolocation_state
+            MAX(silver.fn_states_fullnames(geolocation_state)) AS geolocation_state,
+            MAX(geolocation_state) AS state_code
         FROM bronze.olist_geolocation_dataset
         GROUP BY geolocation_zip_code_prefix;
 
@@ -278,13 +282,15 @@ BEGIN
 	        seller_id,
 	        seller_zip_code_prefix,
 	        seller_city,
-	        seller_state)
+	        seller_state,
+            state_code)
 
         SELECT 
 	        TRIM(seller_id) AS seller_id,
 	        CAST(seller_zip_code_prefix AS INT) AS seller_zip_code_prefix,
 	        TRIM(silver.fn_cap_city_names(seller_city)) AS seller_city,
-	        TRIM(silver.fn_states_fullnames(seller_state)) AS seller_state
+	        TRIM(silver.fn_states_fullnames(seller_state)) AS seller_state,
+            seller_state AS state_code
         FROM bronze.olist_sellers_dataset;
 
         SET @end_time = GETDATE();
@@ -299,8 +305,3 @@ BEGIN
         PRINT '==================================================================';
     END CATCH
 END;
-
-
---  =================================================================================
---  EXEC silver.load_silver
---  =================================================================================
