@@ -95,12 +95,14 @@ The **Gold Layer** is the business-level data representation, structured to supp
 
 | Column Name | Data Type | Description |
 | :--- | :--- | :--- |
+| **payment_key** | `INT` | Surrogate key uniquely identifying each payment record in the payment fact table. |
 | **order_key** | `INT` | Foreign key linking payment to the time it was processed. |
+| **date_id** | `DATE` | Foreign key linking dates to the time when the order is processed. |
 | **payment_sequential** | `INT` | Sequence of payments if a customer used multiple methods for one order. |
 | **payment_type** | `NVARCHAR(30)` | Categorizes the payment (e.g., ‘Credit_card’, ‘Voucher’). |
 | **payment_installments** | `INT` | Number of monthly payments the customer chose. |
 | **payment_amount** | `DECIMAL(10,2)` | Total amount processed in this specific transaction line. |
-| **date_id** | `DATE` | Foreign key linking dates to the time when the order is processed. |
+| **is_voucher_only** | `INT` | If the payment is done only with voucher it return '1' if not it will be '0'. |
 
 ### `gold.fact_reviews`
 **Purpose:** Measures customer satisfaction and correlates it with operational performance like delivery speed or product quality.
