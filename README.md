@@ -43,14 +43,25 @@ This project implements the **Medallion Architecture**, progressing through Bron
 * **Structure:** 9 interconnected tables forming a robust relational schema.
 
 ---
+## 🛠️ Tech Stack & Tools
+The following tools were leveraged to build this end-to-end analytical solution:
+
+* **💾 SQL Server 2022**: Primary Database Engine used for the Data Warehouse (Bronze, Silver, and Gold layers).
+* **📐 Draw.io**: Used for designing the **Data Architecture** and **Star Schema** ERD.
+* **📓 Notion**: Utilized for project management, technical documentation, and tracking data mapping requirements.
+* **🤖 Gemini AI**: Employed as a technical co-pilot for optimizing SQL queries and refining documentation logic.
+---
 
 ## 💎 Data Quality & "Gold Standard" Highlights
-During the Silver-to-Gold transition, the following audits were performed:
+During the transition from Silver to Gold, I performed rigorous audits to ensure data integrity. One significant discovery was the handling of orphaned records:
 
-### 🔗 1. Referential Integrity (Zero-Orphan Rule)
-* **Status:** 100% Certified ✅
-* **Metric:** 0 orphaned records across `fact_sales`, `fact_payments`, and `fact_reviews`.
-* **Win:** Every transaction is perfectly attributed to a valid product and seller.
+### 🔗 1. Advanced Referential Integrity (The "Ghost Order" Resolution)
+* **Discovery**: Identified **3,345 transaction records** where the `order` existed but the corresponding `customer` profile was missing from the source system.
+* **Challenge**: A standard join would result in `NULL` keys, which break BI filtering and lead to inaccurate reporting.
+* **The "Gold Standard" Fix**: 
+    * Implemented an **Unknown Member Strategy** by manually injecting a technical record (`customer_key = -1`) into the `dim_customers` table using a `UNION ALL` approach.
+    * Applied `ISNULL(customer_key, -1)` logic in the Fact layer.
+* **Impact**: Preserved **100% of the sales revenue** in the reporting layer while explicitly flagging incomplete source data for investigation, ensuring the Star Schema is 100% structurally sound.
 
 ### 🌍 2. Geospatial Precision
 * **Status:** Hardened 📍
@@ -92,6 +103,6 @@ I am a **B.Com (Computer Applications)** graduate from Gauthami Degree College (
 * **The Transition:** After 1.5 years as a **Trust & Safety Associate at Accenture**, I developed a sharp eye for data patterns and integrity. I am now pivoting my career into **Data Analytics**, bridging my operational experience with technical SQL expertise.
 * **My Philosophy:** I believe data is only as good as its integrity. This project reflects my commitment to building "Gold Standard" data models that businesses can trust implicitly.
 
-**Let's Connect!**
+## 📫 Let's Connect!
 * www.linkedin.com/in/hruday-bhaskar-madanu
 * hrudaybhaskar45@gmail.com
