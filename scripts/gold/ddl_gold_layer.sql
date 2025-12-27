@@ -19,6 +19,11 @@ Usage:
 --  =================================================================
 
 
+--  =================================================================
+--  Create Dimension Table: gold.dim_customers
+--  =================================================================
+
+
 IF OBJECT_ID('gold.dim_customers', 'V') IS NOT NULL
 DROP VIEW gold.dim_customers;
 GO
@@ -40,25 +45,40 @@ CREATE VIEW gold.dim_customers AS
             WHEN gi.geolocation_lng > -30 OR gi.geolocation_lng < -75 THEN NULL 
             ELSE gi.geolocation_lng 
         END AS clean_lng,
-        ROW_NUMBER() OVER(
-            PARTITION BY ci.customer_unique_id 
-            ORDER BY ci.customer_id DESC) as recency_rank
+        ROW_NUMBER() OVER(PARTITION BY ci.customer_unique_id ORDER BY ci.customer_id DESC) as recency_rank
     FROM silver.customers_info ci
     LEFT JOIN silver.geolocation_info gi
-    ON ci.customer_zip_code_prefix = gi.geolocation_zip_code_prefix)
+    ON ci.customer_zip_code_prefix = gi.geolocation_zip_code_prefix),
 
-SELECT 
-    CAST(ROW_NUMBER() OVER(ORDER BY customer_unique_id) AS INT) AS customer_key,
-    customer_unique_id,
-    customer_id,
-    customer_city,
-    customer_state,
-    state_code,
-    customer_zip_code_prefix AS customer_zipcode,
-    CAST(clean_lat AS DECIMAL(9,6)) AS latitude,
-    CAST(clean_lng AS DECIMAL(9,6)) AS longitude
-FROM RankedCustomers
-WHERE recency_rank = 1;
+    FinalData AS (
+    -- 1. Create the 'Unknown' record first
+    SELECT 
+        -1 AS customer_key,
+        '000000' AS customer_unique_id,
+        '000000' AS customer_id,
+        'Unknown' AS customer_city,
+        'Unknown' AS customer_state,
+        'Unknown' AS state_code,
+        0 AS customer_zipcode,
+        CAST(NULL AS DECIMAL(9,6)) AS latitude,
+        CAST(NULL AS DECIMAL(9,6)) AS longitude
+
+    UNION ALL
+
+    SELECT 
+        CAST(ROW_NUMBER() OVER(ORDER BY customer_unique_id) AS INT) AS customer_key,
+        customer_unique_id,
+        customer_id,
+        customer_city,
+        customer_state,
+        state_code,
+        customer_zip_code_prefix AS customer_zipcode,
+        CAST(clean_lat AS DECIMAL(9,6)) AS latitude,
+        CAST(clean_lng AS DECIMAL(9,6)) AS longitude
+    FROM RankedCustomers
+    WHERE recency_rank = 1)
+
+    SELECT * FROM FinalData;
 GO
 
 --  =====================================================================
@@ -270,7 +290,7 @@ SELECT
 	do.order_key,
 	oi.order_item_id AS order_sequence_no,
 	ds.seller_key,
-	dc.customer_key,
+	ISNULL(dc.customer_key, -1) AS customer_key,
 	df.product_key,
 	CAST(oi.price AS DECIMAL(10,2)) AS price,
 	CAST(oi.freight_value AS DECIMAL(10,2)) AS freight_value,
