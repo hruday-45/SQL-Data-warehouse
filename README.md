@@ -71,7 +71,6 @@ During the transition from Silver to Gold, I performed rigorous audits to ensure
 ### ⏳ 3. Temporal Continuity
 * **Status:** Verified 📅
 * **Metric:** 0 gaps in the `dim_date` timeline.
-* **Win:** Used a Recursive CTE to fill a **616-day gap**, ensuring time-series growth metrics (YoY/MoM) are mathematically sound.
 
 ### 👤 4. Identity & Deduplication
 * **Status:** Resolved 🧹
