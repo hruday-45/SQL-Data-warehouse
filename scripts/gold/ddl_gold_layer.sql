@@ -19,11 +19,6 @@ Usage:
 --  =================================================================
 
 
---  =================================================================
---  Create Dimension Table: gold.dim_customers
---  =================================================================
-
-
 IF OBJECT_ID('gold.dim_customers', 'V') IS NOT NULL
 DROP VIEW gold.dim_customers;
 GO
@@ -51,7 +46,6 @@ CREATE VIEW gold.dim_customers AS
     ON ci.customer_zip_code_prefix = gi.geolocation_zip_code_prefix),
 
     FinalData AS (
-    -- 1. Create the 'Unknown' record first
     SELECT 
         -1 AS customer_key,
         '000000' AS customer_unique_id,
