@@ -50,31 +50,6 @@ The following tools were leveraged to build this end-to-end analytical solution:
 * **📐 Draw.io**: Used for designing the **Data Architecture** and **Star Schema** ERD.
 * **📓 Notion**: Utilized for project management, technical documentation, and tracking data mapping requirements.
 * **🤖 Gemini AI**: Employed as a technical co-pilot for optimizing SQL queries and refining documentation logic.
----
-
-## 💎 Data Quality & "Gold Standard" Highlights
-During the transition from Silver to Gold, I performed rigorous audits to ensure data integrity. One significant discovery was the handling of orphaned records:
-
-### 🔗 1. Advanced Referential Integrity (The "Ghost Order" Resolution)
-* **Discovery**: Identified **3,345 transaction records** where the `order` existed but the corresponding `customer` profile was missing from the source system.
-* **Challenge**: A standard join would result in `NULL` keys, which break BI filtering and lead to inaccurate reporting.
-* **The "Gold Standard" Fix**: 
-    * Implemented an **Unknown Member Strategy** by manually injecting a technical record (`customer_key = -1`) into the `dim_customers` table using a `UNION ALL` approach.
-    * Applied `ISNULL(customer_key, -1)` logic in the Fact layer.
-* **Impact**: Preserved **100% of the sales revenue** in the reporting layer while explicitly flagging incomplete source data for investigation, ensuring the Star Schema is 100% structurally sound.
-
-### 🌍 2. Geospatial Precision
-* **Status:** Hardened 📍
-* **Implementation:** Upgraded coordinates to `DECIMAL(9,6)`.
-* **Win:** Resolved Brazilian coordinate truncation and filtered out-of-bounds geographic outliers for accurate mapping.
-
-### ⏳ 3. Temporal Continuity
-* **Status:** Verified 📅
-* **Metric:** 0 gaps in the `dim_date` timeline.
-
-### 👤 4. Identity & Deduplication
-* **Status:** Resolved 🧹
-* **Win:** Resolved **2,997 duplicate** IDs using a `ROW_NUMBER()` partitioning strategy to maintain a "Single Source of Truth" for customer addresses.
 
 ---
 
