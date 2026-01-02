@@ -87,7 +87,7 @@ BEGIN
 
         SET @start_time = GETDATE();
 
-        PRINT '--->Truncating Table: silver.order_items';
+        PRINT '---> Truncating Table: silver.order_items';
         TRUNCATE TABLE silver.order_items;
 
         PRINT '---> Inserting Data Info: silver.order_items';
