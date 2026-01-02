@@ -18,110 +18,91 @@ Usage:
 --  Create Dimension Table: gold.dim_customers
 --  =================================================================
 
-
 IF OBJECT_ID('gold.dim_customers', 'V') IS NOT NULL
 DROP VIEW gold.dim_customers;
 GO
 
-CREATE VIEW gold.dim_customers AS
-   WITH RankedCustomers AS (
+CREATE OR ALTER VIEW gold.dim_customers AS
+WITH customer_orders AS (
+    -- Aggregating order stats per customer
     SELECT 
-        ci.customer_unique_id,
-        ci.customer_id,
-        ci.customer_city,
-        ci.customer_state,
-        ci.state_code,
-        ci.customer_zip_code_prefix,
-        CASE 
-            WHEN gi.geolocation_lat > 6 OR gi.geolocation_lat < -35 THEN NULL 
-            ELSE gi.geolocation_lat 
-        END AS clean_lat,
-        CASE 
-            WHEN gi.geolocation_lng > -30 OR gi.geolocation_lng < -75 THEN NULL 
-            ELSE gi.geolocation_lng 
-        END AS clean_lng,
-        ROW_NUMBER() OVER(PARTITION BY ci.customer_unique_id ORDER BY ci.customer_id DESC) as recency_rank
-    FROM silver.customers_info ci
-    LEFT JOIN silver.geolocation_info gi
-    ON ci.customer_zip_code_prefix = gi.geolocation_zip_code_prefix),
-
-    FinalData AS (
-    SELECT 
-        -1 AS customer_key,
-        '000000' AS customer_unique_id,
-        '000000' AS customer_id,
-        'Unknown' AS customer_city,
-        'Unknown' AS customer_state,
-        'Unknown' AS state_code,
-        0 AS customer_zipcode,
-        CAST(NULL AS DECIMAL(9,6)) AS latitude,
-        CAST(NULL AS DECIMAL(9,6)) AS longitude
-
-    UNION ALL
-
-    SELECT 
-        CAST(ROW_NUMBER() OVER(ORDER BY customer_unique_id) AS INT) AS customer_key,
-        customer_unique_id,
-        customer_id,
-        customer_city,
-        customer_state,
-        state_code,
-        customer_zip_code_prefix AS customer_zipcode,
-        CAST(clean_lat AS DECIMAL(9,6)) AS latitude,
-        CAST(clean_lng AS DECIMAL(9,6)) AS longitude
-    FROM RankedCustomers
-    WHERE recency_rank = 1)
-
-    SELECT * FROM FinalData;
-GO
-
---  =====================================================================
---  Create Dimension Table: gold.dim_orders
---  =====================================================================
-
-IF OBJECT_ID('gold.dim_orders', 'V') IS NOT NULL
-DROP VIEW gold.dim_orders;
-GO
-
-CREATE VIEW gold.dim_orders AS
-WITH payments_info AS (
-    SELECT 
-        order_id,
-        SUM(payment_value) AS total_amount_paid,
-        MAX(payment_installments) AS max_installments,
-        COUNT(payment_sequential) AS payment_methods_count
-    FROM silver.order_payments
-    GROUP BY order_id),
-	
-review_info AS (
+        c.customer_unique_id,
+        MIN(o.order_purchase_timestamp) AS first_order_date,
+        MAX(o.order_purchase_timestamp) AS last_order_date,
+        COUNT(o.order_id) AS total_orders
+    FROM silver.orders_info o
+    LEFT JOIN silver.customers_info c ON o.customer_id = c.customer_id
+    GROUP BY c.customer_unique_id
+),
+DimensionBase AS (
     SELECT
-        order_id,
-        CAST(AVG(CAST(review_score AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS avg_review_score
-    FROM silver.order_reviews
-    GROUP BY order_id)
+        -- keys
+        CAST(ROW_NUMBER() OVER (ORDER BY c.customer_unique_id) AS INT) AS customer_key,
+        c.customer_id,
+        c.customer_unique_id,
 
-SELECT
-    CAST(ROW_NUMBER() OVER(ORDER BY oi.order_id) AS INT) AS order_key,
-    oi.order_id,
-    oi.customer_id,
-    ISNULL(ri.avg_review_score, 0) AS avg_review_score,
-    ISNULL(pa.payment_methods_count, 0) AS payment_methods_count,
-    CAST(ISNULL(pa.total_amount_paid, 0) AS DECIMAL(10,2)) AS total_amount_paid,
-    CAST(FORMAT(oi.order_purchase_timestamp, 'yyyy-MM-dd HH:mm') AS NVARCHAR(20)) AS purchase_date,
-    CAST(FORMAT(oi.order_delivered_customer_date, 'yyyy-MM-dd HH:mm') AS NVARCHAR(20)) AS delivered_date,
-    CAST(FORMAT(oi.order_estimated_delivery_date, 'yyyy-MM-dd HH:mm') AS NVARCHAR(20)) AS delivery_estimated_date,
-    DATEDIFF(day, oi.order_purchase_timestamp, oi.order_delivered_customer_date) AS actual_delivered_days,
-    CASE 
-        WHEN oi.order_delivered_customer_date > oi.order_estimated_delivery_date THEN 1 
-        ELSE 0 
-    END AS late_delivery,
-    CASE 
-        WHEN oi.order_status = 'delivered' AND oi.order_delivered_customer_date IS NULL THEN 'shipped' 
-        ELSE oi.order_status 
-    END AS order_status
-FROM silver.orders_info oi
-LEFT JOIN payments_info pa ON oi.order_id = pa.order_id
-LEFT JOIN review_info ri ON oi.order_id = ri.order_id;
+        -- Attributes
+        c.customer_city,
+        c.customer_state,
+        c.customer_zip_code_prefix,
+
+        -- Geolocation
+        g.geolocation_lat AS latitude,
+        g.geolocation_lng AS longitude,
+
+        -- Metrics
+        CAST(co.first_order_date AS DATE) AS first_order_date,
+        CAST(co.last_order_date AS DATE) AS last_order_date,
+        ISNULL(co.total_orders, 0) AS total_orders,
+
+        -- Logic for Flags
+        CASE WHEN co.total_orders > 1 THEN 'Yes' ELSE 'No' END AS is_repeat_customer,
+        DATEDIFF(DAY, co.first_order_date, co.last_order_date) AS customer_tenure_days
+    FROM silver.customers_info c
+    LEFT JOIN customer_orders co ON c.customer_unique_id = co.customer_unique_id
+    LEFT JOIN silver.geolocation_info g ON c.customer_zip_code_prefix = g.geolocation_zip_code_prefix
+)
+
+-- Combining Real Customers with the Placeholder Row
+SELECT * FROM DimensionBase
+
+UNION ALL
+
+SELECT 
+    -1, 'UNKNOWN', 'UNKNOWN', 'unknown', 'NA', NULL, NULL, NULL, NULL, NULL, 0, 'No', 0;
+GO
+
+--  ===================================================================
+--  Create Dimension Table: gold.dim_sellers
+--  ===================================================================
+
+IF OBJECT_ID('gold.dim_sellers', 'V') IS NOT NULL
+DROP VIEW gold.dim_sellers;
+GO
+
+CREATE OR ALTER VIEW gold.dim_sellers AS
+WITH SellerBase AS (
+    -- Primary business logic for actual sellers
+    SELECT 
+        CAST(ROW_NUMBER() OVER(ORDER BY s.seller_id) AS INT) AS seller_key,   -- surrogate key
+        s.seller_id,                                                          -- Natural business key
+        s.seller_city,
+        s.seller_state,
+        s.seller_zip_code_prefix,
+        gi.geolocation_lat AS latitude,
+        gi.geolocation_lng AS longitude
+    FROM silver.sellers_info s
+    LEFT JOIN silver.geolocation_info gi
+    ON s.seller_zip_code_prefix = gi.geolocation_zip_code_prefix
+)
+
+-- Combining Real Sellers with the Placeholder Row
+SELECT * FROM SellerBase
+
+UNION ALL
+
+SELECT 
+    -1,'UNKNOWN','unknown','NA',NULL,NULL,NULL;
 GO
 
 --  ======================================================================
@@ -133,45 +114,73 @@ DROP VIEW gold.dim_products;
 GO
 
 CREATE VIEW gold.dim_products AS
+WITH ProductBase AS(
 SELECT 
-	CAST(ROW_NUMBER() OVER (ORDER BY product_id) AS INT) AS product_key,
-	p.product_id,
-	ISNULL(pn.product_category_name_english, 'others') AS category_name,
-	CAST(ISNULL(p.product_weight_g, 0)/ 1000.0 AS DECIMAL(10,3)) AS weight_kg,
-	ISNULL(p.product_name_length, 0) AS name_length,
-	CASE WHEN p.product_description_lenght IS NULL OR p.product_description_lenght = 0 THEN 'No Details'
-		 WHEN p.product_description_lenght < 200 THEN 'Low'
-		 WHEN p.product_description_lenght BETWEEN 200 AND 1000 THEN 'Standard'
-		 ELSE 'High'
-	END AS description_quality,
-	ISNULL(p.product_photos_qty, 0) AS photos_quantity,
-	(p.product_width_cm * p.product_length_cm * product_height_cm) AS volume_cm3
+    CAST(ROW_NUMBER() OVER(ORDER BY p.product_id) AS INT) AS product_key,                -- surrogate key
+    p.product_id,                                                           -- Natural business key
+
+    -- Handling names with are not present in the translation table
+    ISNULL(p.product_category_name, 'outros') AS product_category_name,
+    ISNULL(t.product_category_name_english, 'others') AS product_category_name_english,
+    
+    -- Physical Dimensions
+    p.product_weight_g,
+    p.product_length_cm,
+    p.product_height_cm,
+    p.product_width_cm,
+    
+    -- Calculated Volume
+    -- Handle NULLs using COALESCE to avoid errors in calculation
+    CAST(COALESCE(p.product_length_cm, 0) * COALESCE(p.product_height_cm, 0) * COALESCE(p.product_width_cm, 0) AS DECIMAL(10,2)) AS product_volume_cm3
+
 FROM silver.products_info p
-LEFT JOIN silver.product_category_name_translation pn
-ON p.product_category_name = pn.product_category_name;
+LEFT JOIN silver.product_category_name_translation t 
+    ON TRIM(p.product_category_name) = TRIM(t.product_category_name)
+)
+    
+    SELECT * FROM ProductBase
+    UNION ALL
+    SELECT 
+        -1, 'UNKNOWN', 'unknown', 'unknown', 0, 0, 0, 0, 0;
 GO
 
---  ===================================================================
---  Create Dimension Table: gold.dim_sellers
---  ===================================================================
+--  =====================================================================
+--  Create Dimension Table: gold.dim_orders
+--  =====================================================================
 
-IF OBJECT_ID('gold.dim_sellers', 'V') IS NOT NULL
-DROP VIEW gold.dim_sellers;
+IF OBJECT_ID('gold.dim_orders', 'V') IS NOT NULL
+DROP VIEW gold.dim_orders;
 GO
 
-CREATE VIEW gold.dim_sellers AS
+CREATE VIEW gold.dim_orders AS
+WITH OrdersBase AS(
 SELECT 
-	CAST(ROW_NUMBER() OVER(ORDER BY seller_id) AS INT) AS seller_key,
-	s.seller_id,	
-	s.seller_city AS seller_city,
-	s.seller_state AS seller_state,
-	s.state_code,
-	s.seller_zip_code_prefix AS seller_zip_code,
-	gi.geolocation_lat AS latitude,
-	gi.geolocation_lng AS longitude
-FROM silver.sellers_info s
-LEFT JOIN silver.geolocation_info gi
-ON s.seller_zip_code_prefix = gi.geolocation_zip_code_prefix;
+    CAST(ROW_NUMBER() OVER(ORDER BY order_id) AS INT) AS order_key,      -- surrogate key
+    order_id,                                               -- The natural business key
+    customer_id,                                            -- The natural business key
+    order_status,
+    
+    -- Timestamps
+    order_purchase_timestamp,
+    order_approved_at,
+    order_delivered_carrier_date,
+    order_delivered_customer_date,
+    order_estimated_delivery_date,
+
+    -- derived columns
+    CASE 
+        WHEN order_delivered_customer_date <= order_estimated_delivery_date THEN 'On Time'
+        WHEN order_delivered_customer_date > order_estimated_delivery_date THEN 'Late'
+        ELSE 'Pending/Cancelled'
+    END AS delivery_performance_status
+FROM silver.orders_info)
+
+SELECT * FROM OrdersBase
+
+UNION
+
+SELECT 
+    -1, 'UNKNOWN', 'UNKNOWN', 'unknown', NULL, NULL, NULL, NULL, NULL, 'unknown';
 GO
 
 --  ===================================================================
@@ -182,48 +191,162 @@ IF OBJECT_ID('gold.dim_date', 'V') IS NOT NULL
 DROP VIEW gold.dim_date;
 GO
 
-CREATE VIEW gold.dim_date AS
-WITH date_range AS (
-    SELECT MIN(full_date) as start_date, MAX(full_date) as end_date
-    FROM (
-        SELECT CAST(order_purchase_timestamp AS DATE) AS full_date 
-        FROM silver.orders_info
-        UNION
-        SELECT CAST(review_creation_date AS DATE) 
-        FROM silver.order_reviews
-        UNION
-        SELECT CAST(shipping_limit_date AS DATE) 
-        FROM silver.order_items) 
-        sub),
-
-t10 AS (SELECT n 
-        FROM (VALUES (0),(1),(2),(3),(4),(5),(6),(7),(8),(9)) t(n)),
-numbers AS (
-    SELECT (a.n * 1000 + b.n * 100 + c.n * 10 + d.n) AS n
-    FROM t10 a, t10 b, t10 c, t10 d),
-
-date_series AS (
-    SELECT DATEADD(DAY, n, start_date) AS full_date
-    FROM date_range, numbers
-    WHERE DATEADD(DAY, n, start_date) <= end_date)
-
+CREATE OR ALTER VIEW gold.dim_date AS
+WITH Numbers AS (
+    SELECT TOP (1100)     -- Selecting no of day for this business data period
+           ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) - 1 AS n
+    FROM sys.all_objects
+),
+DateSeries AS (
+    SELECT DATEADD(DAY, n, CAST('2016-01-01' AS DATE)) AS d
+    FROM Numbers
+    WHERE DATEADD(DAY, n, CAST('2016-01-01' AS DATE)) <= '2018-12-31'
+)
 SELECT
-    full_date AS date_id, 
-    DATEPART(YEAR, full_date) AS year, 
-    DATEPART(QUARTER, full_date) AS quarter_number,
-    'Q' + CAST(DATEPART(QUARTER, full_date) AS NVARCHAR(1)) AS quarter_name, 
-    DATEPART(MONTH, full_date) AS month_number,
-    DATENAME(MONTH, full_date) AS month_name, 
-    CAST(FORMAT(full_date, 'yyyy-MM') AS NVARCHAR(20)) AS year_month, 
-    DATEPART(WEEK, full_date) AS week_of_year,
-    DATEPART(DAY, full_date) AS day_number, 
-    DATENAME(WEEKDAY, full_date) AS day_name,
-    DATEPART(WEEKDAY, full_date) AS day_of_week_sort,
+    CONVERT(INT, FORMAT(d, 'yyyyMMdd')) AS date_key,
+    d AS date,
+    DAY(d) AS day,
+    DATEPART(WEEK, d) AS week,
+    MONTH(d) AS month,
+    DATENAME(MONTH, d) AS month_name,
+    DATEPART(QUARTER, d) AS quarter,
+    YEAR(d) AS year,
     CASE 
-        WHEN DATEPART(WEEKDAY, full_date) IN (1, 7) THEN 1 
+        WHEN DATENAME(WEEKDAY, d) IN ('Saturday','Sunday') THEN 1 
         ELSE 0 
-    END AS is_weekend
-FROM date_series;
+    END AS is_weekend,
+    CASE 
+        WHEN (MONTH(d) = 1  AND DAY(d) = 1)
+          OR (MONTH(d) = 4  AND DAY(d) = 21)
+          OR (MONTH(d) = 5  AND DAY(d) = 1)
+          OR (MONTH(d) = 9  AND DAY(d) = 7)
+          OR (MONTH(d) = 10 AND DAY(d) = 12)
+          OR (MONTH(d) = 11 AND DAY(d) = 2)
+          OR (MONTH(d) = 11 AND DAY(d) = 15)
+          OR (MONTH(d) = 12 AND DAY(d) = 25)
+        THEN 1 ELSE 0
+    END AS is_holiday_brazil_flag
+FROM DateSeries;
+GO
+
+--  =================================================================
+--  Create Dimension Table: gold.dim_location
+--  =================================================================
+
+IF OBJECT_ID('gold.dim_location', 'V') IS NOT NULL
+DROP VIEW gold.dim_location;
+GO
+
+CREATE OR ALTER VIEW gold.dim_location AS
+WITH CleanedGeolocation AS (
+    SELECT 
+        geo.geolocation_zip_code_prefix AS location_key, -- Surrogate Key
+        geo.geolocation_zip_code_prefix,
+        MAX(silver.fn_CleanSilverEncoding(geo.geolocation_city)) AS city,
+        geo.geolocation_state AS state_code,
+        sc.state_name,
+        sc.region_name,
+
+        -- Failsafe Coordinate Logic: Filter corrupted points, then fallback to state center
+        CAST(COALESCE(
+            AVG(CASE WHEN geo.geolocation_lat BETWEEN -34 AND 6 AND geo.geolocation_lng BETWEEN -74 AND -34 
+                     THEN geo.geolocation_lat END), sc.avg_lat) AS DECIMAL(9,6)) AS latitude,
+    
+        CAST(COALESCE(
+            AVG(CASE WHEN geo.geolocation_lat BETWEEN -34 AND 6 AND geo.geolocation_lng BETWEEN -74 AND -34 
+                     THEN geo.geolocation_lng END), sc.avg_lng) AS DECIMAL(9,6)) AS longitude
+    
+    FROM silver.geolocation_info geo
+    LEFT JOIN silver.state_centers sc ON geo.geolocation_state = sc.state_code
+    GROUP BY geo.geolocation_zip_code_prefix, geo.geolocation_state, sc.avg_lat, sc.avg_lng, sc.state_name, sc.region_name
+)
+
+    --  combining real data with a placeholder for unknown locations
+    SELECT * FROM CleanedGeolocation
+    UNION ALL
+    SELECT 
+        -1, 0, 'unknown', 'NA', 'Unknown', 'Unknown', NULL, NULL;
+GO
+--  ======================================================================
+--  Create Fact Table: gold.fact_sales
+--  ======================================================================
+
+IF OBJECT_ID('gold.fact_sales', 'V') IS NOT NULL
+DROP VIEW gold.fact_sales;
+GO
+
+CREATE OR ALTER VIEW gold.fact_sales AS
+WITH SalesBase AS (
+    SELECT 
+        oi.order_id,
+        oi.product_id,
+        oi.seller_id,
+        o.customer_id,
+        o.order_status,
+        o.order_purchase_timestamp,
+        o.order_approved_at,
+        o.order_delivered_carrier_date,
+        o.order_delivered_customer_date,
+        o.order_estimated_delivery_date,
+        oi.price AS product_price,
+        oi.freight_value,
+        (oi.price + oi.freight_value) AS total_product_value
+    FROM silver.order_items oi
+    JOIN silver.orders_info o ON oi.order_id = o.order_id
+),
+PaymentAggregation AS (
+    SELECT 
+        order_id, 
+        SUM(payment_value) AS total_order_payment 
+    FROM silver.order_payments
+    GROUP BY order_id
+)
+SELECT DISTINCT
+    -- 1. Surrogate Keys from Dimensions
+    -- We join to Gold to get the INT keys and use COALESCE for the -1 placeholder
+    CAST(ISNULL(do.order_key, -1) AS INT) AS order_key,
+    CAST(ISNULL(dc.customer_key, -1) AS INT) AS customer_key,
+    CAST(ISNULL(ds.seller_key, -1) AS INT) AS seller_key,
+    CAST(ISNULL(dp.product_key, -1) AS INT) AS product_key,
+
+    -- 4. Metrics
+    sb.product_price,
+    sb.freight_value,
+    sb.total_product_value,
+    pa.total_order_payment,
+
+    -- 3. order_status
+    sb.order_status,
+    
+    -- 4. Date Keys (Formatted as YYYYMMDD)
+    CAST(sb.order_purchase_timestamp AS DATE) AS order_purchase_timestamp,
+    CAST(sb.order_approved_at AS DATE) AS order_approved_at,
+    CAST(sb.order_delivered_carrier_date AS DATE) AS order_delivered_carrier_date,
+    CAST(sb.order_delivered_customer_date AS DATE) AS order_delivered_customer_date,
+
+    -- 5. Calculated Logistics
+    DATEDIFF(DAY, sb.order_purchase_timestamp, sb.order_delivered_customer_date) AS total_delivery_days,
+    DATEDIFF(DAY, sb.order_purchase_timestamp, sb.order_delivered_carrier_date) AS seller_processing_days,
+    DATEDIFF(DAY, sb.order_delivered_carrier_date, sb.order_delivered_customer_date) AS carrier_transit_days,
+
+     -- 6. Flags
+      CASE 
+        WHEN sb.order_delivered_customer_date > sb.order_estimated_delivery_date 
+        THEN DATEDIFF(DAY, sb.order_estimated_delivery_date, sb.order_delivered_customer_date) 
+        ELSE 0 
+    END AS delivery_delay_days,
+    CASE WHEN sb.order_delivered_carrier_date IS NOT NULL THEN 1 ELSE 0 END AS is_shipped_flag,
+    CASE WHEN sb.order_status = 'delivered' THEN 1 ELSE 0 END AS is_delivered_flag,
+    CASE WHEN sb.order_delivered_customer_date > sb.order_estimated_delivery_date THEN 1 
+         ELSE 0 
+    END AS is_late_delivery_flag
+
+    FROM SalesBase sb
+    LEFT JOIN PaymentAggregation pa ON sb.order_id = pa.order_id
+    LEFT JOIN gold.dim_orders do    ON sb.order_id = do.order_id
+    LEFT JOIN gold.dim_customers dc ON sb.customer_id = dc.customer_id
+    LEFT JOIN gold.dim_sellers ds   ON sb.seller_id = ds.seller_id
+    LEFT JOIN gold.dim_products dp   ON sb.product_id = dp.product_id;
 GO
 
 --  ===================================================================
@@ -234,19 +357,25 @@ IF OBJECT_ID('gold.fact_payments', 'V') IS NOT NULL
 DROP VIEW gold.fact_payments;
 GO
 
-CREATE VIEW gold.fact_payments AS
-SELECT 
-    CAST(ROW_NUMBER() OVER(ORDER BY do.order_id, payment_sequential) AS INT) AS payment_key,
-    do.order_key,
-    dd.date_id,
-    payment_sequential,
-    payment_type,
-    payment_installments,
-    op.payment_value AS payment_amount,
-    CASE WHEN op.payment_value = 0 THEN 1 ELSE 0 END AS is_voucher_only
-FROM silver.order_payments op
-INNER JOIN gold.dim_orders do ON op.order_id = do.order_id
-INNER JOIN gold.dim_date dd ON CAST(do.purchase_date AS DATE) = dd.date_id;;
+CREATE OR ALTER VIEW gold.fact_payments AS
+    SELECT 
+        CAST(ISNULL(do.order_key, -1) AS INT) AS order_key,
+        CAST(ISNULL(dc.customer_key, -1) AS INT) AS customer_key,
+        CAST(o.order_approved_at AS DATE) AS order_approved_at,
+        p.payment_value,
+    
+        -- FIX: Force 0 installments to 1 to maintain logical consistency
+        CASE 
+            WHEN p.payment_installments < 1 THEN 1 
+            ELSE p.payment_installments 
+        END AS payment_installments,
+    
+        LOWER(TRIM(p.payment_type)) AS payment_type
+    FROM silver.order_payments p
+    LEFT JOIN silver.orders_info o ON p.order_id = o.order_id
+    LEFT JOIN gold.dim_orders do ON p.order_id = do.order_id
+    LEFT JOIN gold.dim_customers dc ON o.customer_id = dc.customer_id
+    WHERE o.order_approved_at IS NOT NULL;
 GO
 
 --  ====================================================================
@@ -257,47 +386,26 @@ IF OBJECT_ID('gold.fact_reviews', 'V') IS NOT NULL
 DROP VIEW gold.fact_reviews;
 GO
 
-CREATE VIEW gold.fact_reviews AS
+CREATE OR ALTER VIEW gold.fact_reviews AS
+WITH AggregatedReviews AS (
+    SELECT 
+        order_id,
+        AVG(CAST(review_score AS DECIMAL(3,2))) AS avg_review_score, -- Average if they left multiple
+        MAX(review_creation_date) AS latest_review_date,
+        MAX(review_answer_timestamp) AS latest_answer_timestamp
+    FROM silver.order_reviews
+    GROUP BY order_id
+)
 SELECT 
-    ro.review_key,
-    do.order_key,
-    CAST(ro.review_score AS INT) AS review_score,
-    ro.review_comment_title,
-    ro.review_comment_message,
-    CAST(ro.review_creation_date AS DATE) AS date_id,
-	CAST(FORMAT(ro.review_answer_timestamp, 'yyyy-MM-dd HH:mm') AS NVARCHAR(20)) AS review_answer_timestamp
-FROM silver.order_reviews ro
-LEFT JOIN gold.dim_orders do
-ON ro.order_id = do.order_id;
+    CAST(ISNULL(do.order_key, -1) AS INT) AS order_key,
+    CAST(ISNULL(dc.customer_key, -1) AS INT) AS customer_key,
+    CAST(ar.latest_review_date AS DATE) AS review_date,
+    ar.avg_review_score,
+    ar.latest_review_date,
+    ar.latest_answer_timestamp,
+    DATEDIFF(DAY, ar.latest_review_date, ar.latest_answer_timestamp) AS review_response_lag_days
+FROM AggregatedReviews ar
+LEFT JOIN silver.orders_info o ON ar.order_id = o.order_id
+LEFT JOIN gold.dim_orders do ON ar.order_id = do.order_id
+LEFT JOIN gold.dim_customers dc ON o.customer_id = dc.customer_id;
 GO
-
---  ======================================================================
---  Create Fact Table: gold.fact_sales
---  ======================================================================
-
-IF OBJECT_ID('gold.fact_sales', 'V') IS NOT NULL
-DROP VIEW gold.fact_sales;
-GO
-
-CREATE VIEW gold.fact_sales AS
-SELECT 
-	do.order_key,
-	oi.order_item_id AS order_sequence_no,
-	ds.seller_key,
-	ISNULL(dc.customer_key, -1) AS customer_key,
-	df.product_key,
-	CAST(oi.price AS DECIMAL(10,2)) AS price,
-	CAST(oi.freight_value AS DECIMAL(10,2)) AS freight_value,
-	CAST(oi.total_value AS DECIMAL(10,2)) AS total_value,
-	CAST(o.order_purchase_timestamp AS DATE) AS date_id,
-	CAST(oi.shipping_limit_date AS DATE) AS shipping_limit_date
-FROM silver.order_items oi
-LEFT JOIN silver.orders_info o ON oi.order_id = o.order_id
-LEFT JOIN gold.dim_sellers ds ON oi.seller_id = ds.seller_id
-LEFT JOIN gold.dim_orders do ON oi.order_id = do.order_id
-LEFT JOIN gold.dim_customers dc ON o.customer_id = dc.customer_id
-LEFT JOIN gold.dim_products df ON oi.product_id = df.product_id
-
-GO
-
---  ========================================================================
