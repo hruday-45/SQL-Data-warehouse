@@ -19,29 +19,37 @@
 DROP FUNCTION IF EXISTS silver.fn_CleanSilverEncoding;
 GO
 
-CREATE OR ALTER FUNCTION silver.fn_CleanSilverEncoding (@InputText NVARCHAR(MAX))
+CREATE OR ALTER FUNCTION silver.fn_CleanSilverEncoding
+(
+    @InputText NVARCHAR(MAX)
+)
 RETURNS NVARCHAR(MAX)
 AS
 BEGIN
     IF @InputText IS NULL RETURN NULL;
 
-    DECLARE @Result NVARCHAR(MAX) = LOWER(TRIM(@InputText));
+    DECLARE @Result NVARCHAR(MAX);
 
-    -- Step 1: Removing common noise symbols you identified (*, ´, ., º, etc.)
-    -- We replace them with a space
-    SET @Result = TRANSLATE(@Result, N'*´.⁰º…', '      ');
+    -- Unicode-safe normalization (critical)
+    SET @Result = @InputText COLLATE Latin1_General_100_CI_AS_SC;
 
-    -- Step 2: Handling specific Portuguese encoding artifacts
-    -- Sometimes 'º' or 'ª' are encoded differently in raw CSVs
-    SET @Result = REPLACE(@Result, N'4 centenario', 'centenario');
-    SET @Result = REPLACE(@Result, N'4o centenario', 'centenario');
+    -- Trim + lowercase
+    SET @Result = LOWER(LTRIM(RTRIM(@Result)));
 
-    -- Step 3: Removing Accents (The "Abadiânia" fix)
-    SET @Result = TRANSLATE(@Result, 
-        N'áéíóúàèìòùâêîôûãõäëïöüç', 
-        N'aeiouaeiouaeiouaoaeiouc');
+    -- Remove hidden / non-printable characters
+    SET @Result = REPLACE(@Result, CHAR(160), ' '); -- NBSP
+    SET @Result = REPLACE(@Result, CHAR(9),  ' ');  -- tab
+    SET @Result = REPLACE(@Result, CHAR(13), ' ');
+    SET @Result = REPLACE(@Result, CHAR(10), ' ');
 
-    -- Step 4: Cleaning up double spaces created by the translations
+    -- Remove punctuation / noise (but NOT letters or accents)
+    SET @Result = TRANSLATE(
+        @Result,
+        N'!"#$%&''()*+,-./:;<=>?@[\]^_`{|}~',
+        REPLICATE(' ', 32)
+    );
+
+    -- Collapse multiple spaces
     WHILE CHARINDEX('  ', @Result) > 0
         SET @Result = REPLACE(@Result, '  ', ' ');
 
