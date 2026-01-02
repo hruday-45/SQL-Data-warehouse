@@ -42,11 +42,18 @@ BEGIN
     SET @Result = REPLACE(@Result, CHAR(13), ' ');
     SET @Result = REPLACE(@Result, CHAR(10), ' ');
 
+    -- Remove Portuguese accents (length of strings must match)
+    SET @Result = TRANSLATE(
+        @Result,
+        N'áéíóúàèìòùâêîôûãõäëïöüç',
+        N'aeiouaeiouaeiouaoaeiouc'
+    );
+
     -- Remove punctuation / noise (but NOT letters or accents)
     SET @Result = TRANSLATE(
         @Result,
-        N'!"#$%&''()*+,-./:;<=>?@[\]^_`{|}~',
-        REPLICATE(' ', 32)
+        N'!"#$%&''()*+,-./:;<=>?@[\]^_`{|}~´',
+        REPLICATE(' ', 33)
     );
 
     -- Collapse multiple spaces
