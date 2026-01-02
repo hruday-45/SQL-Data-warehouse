@@ -1,4 +1,6 @@
 /*
+Notice: Before using this whole query, I request you to first execute the 
+		city_name_normalization_function.sql and then proceed with this query.
 ===========================================================================
 Stored Procedure: Load Sliver Layer (Bronze ---> Silver)
 ===========================================================================
@@ -39,16 +41,14 @@ BEGIN
             customer_unique_id, 
             customer_zip_code_prefix, 
             customer_city, 
-            customer_state,
-            state_code)
+            customer_state)
 
         SELECT 
             TRIM(customer_id) AS customer_id,
             TRIM(customer_unique_id) AS customer_unique_id,
-            CAST(TRIM(customer_zip_code_prefix) AS INT) AS customer_zip_code_prefix,
-            silver.fn_cap_city_names (customer_city) AS customer_city,
-            silver.fn_states_fullnames (customer_state) AS customer_state,
-            customer_state AS state_code
+            customer_zip_code_prefix,
+            TRIM(silver.fn_CleanSilverEncoding(customer_city)) AS customer_city,
+            TRIM(customer_state)
         FROM bronze.olist_customers_dataset;
 
         SET @end_time = GETDATE();
@@ -67,17 +67,17 @@ BEGIN
             geolocation_lat,
             geolocation_lng,
             geolocation_city,
-            geolocation_state,
-            state_code)
+            geolocation_state)
 
         SELECT  
-            CAST(TRIM(geolocation_zip_code_prefix) AS INT) AS geolocation_zip_code_prefix,
-            CAST(AVG(CAST(geolocation_lat AS DECIMAL(18,10))) AS DECIMAL(9,6)) AS geolocation_lat,
-            CAST(AVG(CAST(geolocation_lng AS DECIMAL(18,10))) AS DECIMAL(9,6)) AS geolocation_lng,
-            MAX(silver.fn_cap_city_names(geolocation_city)) AS geolocation_city,
-            MAX(silver.fn_states_fullnames(geolocation_state)) AS geolocation_state,
-            MAX(geolocation_state) AS state_code
+            geolocation_zip_code_prefix,
+            CAST(AVG(geolocation_lat) AS DECIMAL(9,6)) AS geolocation_lat,
+            CAST(AVG(geolocation_lng) AS DECIMAL(9,6)) AS geolocation_lng,
+            MAX(TRIM(silver.fn_CleanSilverEncoding(geolocation_city))) AS geolocation_city,
+            MAX(geolocation_state) AS geolocation_state
         FROM bronze.olist_geolocation_dataset
+        WHERE (geolocation_lat BETWEEN -34 AND 6) 
+          AND (geolocation_lng BETWEEN -74 AND -34)
         GROUP BY geolocation_zip_code_prefix;
 
         SET @end_time = GETDATE();
@@ -102,12 +102,12 @@ BEGIN
 
         SELECT 
             TRIM(order_id) AS order_id,
-            CAST(TRIM(order_item_id) AS INT) AS order_item_id,
+            order_item_id,
             TRIM(product_id) AS product_id,
             TRIM(seller_id) AS seller_id,
-            CAST(TRIM(shipping_limit_date) AS DATETIME2) AS shipping_limit_date,
-            CAST(price AS DECIMAL(10,2)) AS price,
-            CAST(freight_value AS DECIMAL(10,2)) AS freight_value
+            shipping_limit_date,
+            price,
+            freight_value
         FROM bronze.olist_order_items_dataset;
 
         SET @end_time = GETDATE();
@@ -130,16 +130,16 @@ BEGIN
 
         SELECT
         TRIM(order_id) AS order_id,
-        CAST(payment_sequential AS INT) AS payment_sequential,
-        CASE payment_type
+        payment_sequential,
+        CASE TRIM(payment_type)
 	        WHEN 'credit_card' THEN 'Credit Card'
 	        WHEN 'debit_card'  THEN 'Debit Card'
 	        WHEN 'boleto'	   THEN 'Boleto'
 	        WHEN 'vocher'      THEN 'Vocher'
 	        ELSE 'Other'
 	        END AS payment_type,
-        CAST(payment_installments AS INT) AS payment_installments,
-        CAST(payment_value AS DECIMAL(10,2)) AS payment_value
+        payment_installments,
+        payment_value
         FROM bronze.olist_order_payments_dataset;
 
         SET @end_time = GETDATE();
@@ -165,11 +165,11 @@ BEGIN
         SELECT 
 	        TRIM(review_id) AS review_id,
 	        TRIM(order_id) AS order_id,
-	        CAST(review_score AS INT) AS review_score,
+	        review_score,
 	        ISNULL(review_comment_title, 'N/A') AS review_comment_title,
 	        ISNULL(review_comment_message, 'N/A') AS review_comment_message,
-	        CAST(review_creation_date AS DATETIME2) AS review_creation_date,
-	        CAST(review_answer_timestamp AS DATETIME2) AS review_answer_timestamp
+	        review_creation_date,
+	        review_answer_timestamp
         FROM bronze.olist_order_reviews_dataset;
 
         SET @end_time = GETDATE();
@@ -197,11 +197,11 @@ BEGIN
             TRIM(order_id) AS order_id,
             TRIM(customer_id) AS customer_id,
             UPPER(TRIM (order_status)) AS order_status,
-            CAST(order_purchase_timestamp AS DATETIME2) AS order_purchase_timestamp,
-            CAST(order_approved_at AS DATETIME2) AS order_approved_at,
-            CAST(order_delivered_carrier_date AS DATETIME2) AS order_delivered_carrier_date,
-            CAST(order_delivered_customer_date AS DATETIME2) AS order_delivered_customer_date,
-            CAST(order_estimated_delivery_date AS DATETIME2) AS order_estimated_delivery_date
+            order_purchase_timestamp,
+            order_approved_at,
+            order_delivered_carrier_date,
+            order_delivered_customer_date,
+            order_estimated_delivery_date
         FROM bronze.olist_orders_dataset;
 
         SET @end_time = GETDATE();
@@ -229,43 +229,61 @@ BEGIN
         PRINT '---> Loading Duration:' + CAST(DATEDIFF(second, @start_time, @end_time) AS NVARCHAR) + 'seconds';
         PRINT '------------------------------------------------------------------------------------------------'
 
-        IF NOT EXISTS (SELECT 1 FROM silver.product_category_name_translation WHERE product_category_name = 'outros')
-        BEGIN
-            INSERT INTO silver.product_category_name_translation (product_category_name, product_category_name_english)
-            VALUES ('outros', 'others');
-            PRINT '---> Added [outros] to translation dictionary';
-        END
-
         SET @start_time = GETDATE();
 
         PRINT '---> Truncating Table: silver.products_info';
         TRUNCATE TABLE silver.products_info;
 
         PRINT '---> Inserting Data Info: silver.products_info';
-        INSERT INTO silver.products_info (
-	        product_id,
-	        product_category_name,
-	        product_name_length,
-	        product_description_lenght,
-	        product_photos_qty,
-	        product_weight_g,
-	        product_length_cm,
-	        product_height_cm,
-	        product_width_cm)
 
-          SELECT 
-            TRIM(B.product_id) AS product_id,
-            ISNULL(T.product_category_name, 'outros') AS product_category_name,
-            CAST(B.product_name_lenght AS INT),
-            CAST(B.product_description_lenght AS INT),
-            CAST(B.product_photos_qty AS INT),
-            CAST(B.product_weight_g AS INT),
-            CAST(B.product_length_cm AS INT),
-            CAST(B.product_height_cm AS INT),
-            CAST(B.product_width_cm AS INT)
-        FROM bronze.olist_products_dataset B
-        LEFT JOIN silver.product_category_name_translation T
-            ON B.product_category_name = T.product_category_name;
+        --  For this table I'm using the CTE method to enrich the data
+        --  Calculating median weight per category from bronze source
+        WITH MedianCalculations AS (
+            SELECT 
+                product_category_name,
+                PERCENTILE_CONT(0.5) 
+                    WITHIN GROUP (ORDER BY product_weight_g)
+                    OVER (PARTITION BY product_category_name) AS median_weight
+            FROM bronze.olist_products_dataset
+            WHERE product_weight_g > 0
+              AND product_category_name IS NOT NULL),
+
+        -- Considering only distinct median values per category
+        CategoryMedians AS (
+            SELECT DISTINCT
+                product_category_name,
+                median_weight
+            FROM MedianCalculations)
+
+        INSERT INTO silver.products_info (
+            product_id,
+            product_category_name,
+            product_name_length,
+            product_description_lenght,
+            product_photos_qty,
+            product_weight_g,
+            product_length_cm,
+            product_height_cm,
+            product_width_cm)
+
+        SELECT 
+            TRIM(bp.product_id),
+            TRIM(bp.product_category_name),
+            bp.product_name_lenght,
+            bp.product_description_lenght,
+            bp.product_photos_qty,
+
+            -- If weight is 0 or NULL, I'm use the median; otherwise, keep the original
+            CAST(CASE WHEN bp.product_weight_g IS NULL OR bp.product_weight_g = 0
+                      THEN cm.median_weight
+                       ELSE bp.product_weight_g
+                END AS INT) AS product_weight_g,
+            bp.product_length_cm,
+            bp.product_height_cm,
+            bp.product_width_cm
+        FROM bronze.olist_products_dataset bp
+        LEFT JOIN CategoryMedians cm
+            ON TRIM(bp.product_category_name) = TRIM(cm.product_category_name);
 
         SET @end_time = GETDATE();
 
@@ -282,20 +300,65 @@ BEGIN
 	        seller_id,
 	        seller_zip_code_prefix,
 	        seller_city,
-	        seller_state,
-            state_code)
+	        seller_state)
 
         SELECT 
 	        TRIM(seller_id) AS seller_id,
-	        CAST(seller_zip_code_prefix AS INT) AS seller_zip_code_prefix,
-	        TRIM(silver.fn_cap_city_names(seller_city)) AS seller_city,
-	        TRIM(silver.fn_states_fullnames(seller_state)) AS seller_state,
-            seller_state AS state_code
+	        seller_zip_code_prefix,
+	        TRIM(silver.fn_CleanSilverEncoding(seller_city)) AS seller_city,
+	        TRIM(seller_state) AS seller_state
         FROM bronze.olist_sellers_dataset;
 
         SET @end_time = GETDATE();
 
         PRINT '---> Loading Duration:' + CAST(DATEDIFF(second, @start_time, @end_time) AS NVARCHAR) + 'seconds';
+        PRINT '-------------------------------------------------------------------------------------------------';
+        SET @start_time = GETDATE();
+
+        PRINT '---> Truncating the table: silver.state_centers';
+        TRUNCATE TABLE silver.state_centers;
+
+        PRINT '---> Inserting Data Info: silver.state_centers';
+        INSERT INTO silver.state_centers(
+               state_code, 
+               state_name,
+               region_name,
+               avg_lat, 
+               avg_lng)
+
+        VALUES 
+            ('AC', 'Acre', 'North', -9.0238, -70.8120),
+            ('AL', 'Alagoas', 'Northeast', -9.5713, -36.7820),
+            ('AM', 'Amazonas', 'North', -3.4168, -65.8561),
+            ('AP', 'Amapá', 'North', 1.4154, -51.7711),
+            ('BA', 'Bahia', 'Northeast', -12.5127, -41.7007),
+            ('CE', 'Ceará', 'Northeast', -5.2000, -39.5000),
+            ('DF', 'Distrito Federal', 'Midwest', -15.7998, -47.8645),
+            ('ES', 'Espírito Santo', 'Southeast', -19.1834, -40.3089),
+            ('GO', 'Goiás', 'Midwest', -15.8270, -49.8362),
+            ('MA', 'Maranhão', 'Northeast', -5.4200, -45.4400),
+            ('MG', 'Minas Gerais', 'Southeast', -18.5122, -44.5550),
+            ('MS', 'Mato Grosso do Sul', 'Midwest', -20.7722, -54.7852),
+            ('MT', 'Mato Grosso', 'Midwest', -12.6819, -56.9211),
+            ('PA', 'Pará', 'North', -3.7922, -52.4818),
+            ('PB', 'Paraíba', 'Northeast', -7.2400, -36.7800),
+            ('PE', 'Pernambuco', 'Northeast', -8.2833, -37.9833),
+            ('PI', 'Piauí', 'Northeast', -7.7183, -42.7289),
+            ('PR', 'Paraná', 'South', -24.8923, -51.5597),
+            ('RJ', 'Rio de Janeiro', 'Southeast', -22.4474, -42.9912),
+            ('RN', 'Rio Grande do Norte', 'Northeast', -5.4026, -36.9541),
+            ('RO', 'Rondônia', 'North', -10.8300, -63.3400),
+            ('RR', 'Roraima', 'North', 2.1351, -61.3231),
+            ('RS', 'Rio Grande do Sul', 'South', -30.0019, -53.7611),
+            ('SC', 'Santa Catarina', 'South', -27.2423, -50.2189),
+            ('SE', 'Sergipe', 'Northeast', -10.5741, -37.3857),
+            ('SP', 'São Paulo', 'Southeast', -23.5505, -46.6333),
+            ('TO', 'Tocantins', 'North', -10.1753, -48.2982);
+
+        SET @end_time = GETDATE();
+
+        PRINT '---> Loading Duration:' + CAST(DATEDIFF(second, @start_time, @end_time) AS NVARCHAR) + 'seconds';
+        PRINT '-------------------------------------------------------------------------------------------------';
     END TRY
     BEGIN CATCH
         PRINT '===================================================================';
