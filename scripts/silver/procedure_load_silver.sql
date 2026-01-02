@@ -73,7 +73,7 @@ BEGIN
             geolocation_zip_code_prefix,
             CAST(AVG(geolocation_lat) AS DECIMAL(9,6)) AS geolocation_lat,
             CAST(AVG(geolocation_lng) AS DECIMAL(9,6)) AS geolocation_lng,
-            MAX(TRIM(silver.fn_CleanSilverEncoding(geolocation_city))) AS geolocation_city,
+            MIN(TRIM(silver.fn_CleanSilverEncoding(geolocation_city))) AS geolocation_city,
             MAX(geolocation_state) AS geolocation_state
         FROM bronze.olist_geolocation_dataset
         WHERE (geolocation_lat BETWEEN -34 AND 6) 
@@ -135,7 +135,7 @@ BEGIN
 	        WHEN 'credit_card' THEN 'Credit Card'
 	        WHEN 'debit_card'  THEN 'Debit Card'
 	        WHEN 'boleto'	   THEN 'Boleto'
-	        WHEN 'vocher'      THEN 'Vocher'
+	        WHEN 'voucher'      THEN 'Voucher'
 	        ELSE 'Other'
 	        END AS payment_type,
         payment_installments,
@@ -268,7 +268,7 @@ BEGIN
 
         SELECT 
             TRIM(bp.product_id),
-            TRIM(bp.product_category_name),
+            ISNULL(TRIM(bp.product_category_name), 'outros'),
             bp.product_name_lenght,
             bp.product_description_lenght,
             bp.product_photos_qty,
