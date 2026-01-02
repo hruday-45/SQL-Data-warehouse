@@ -16,10 +16,9 @@ CREATE TABLE silver.customers_info (
 	customer_id					NVARCHAR(50),
 	customer_unique_id			NVARCHAR(50),
 	customer_zip_code_prefix	INT,
-	customer_city				NVARCHAR(100),
-	customer_state				NVARCHAR(100),
-	state_code					NVARCHAR(5),
-	dwh_create_date				DATETIME2 DEFAULT GETDATE()
+	customer_city				NVARCHAR(50),
+	customer_state				NVARCHAR(2),
+	dwh_create_date				DATETIME2(0) DEFAULT GETDATE()
 );
 
 
@@ -30,10 +29,9 @@ CREATE TABLE silver.geolocation_info (
 	geolocation_zip_code_prefix INT,
 	geolocation_lat				DECIMAL(9,6),
 	geolocation_lng				DECIMAL(9,6),
-	geolocation_city			NVARCHAR(100),
-	geolocation_state			NVARCHAR(100),
-	state_code					NVARCHAR(5),
-	dwh_create_date				DATETIME2 DEFAULT GETDATE()
+	geolocation_city			NVARCHAR(50),
+	geolocation_state			NVARCHAR(2),
+	dwh_create_date				DATETIME2(0) DEFAULT GETDATE()
 );
 
 
@@ -41,16 +39,15 @@ IF OBJECT_ID ('silver.order_items ' , 'U') IS NOT NULL
 	DROP TABLE silver.order_items ;
 
 CREATE TABLE silver.order_items (
-	order_item_key		INT IDENTITY(1,1) PRIMARY KEY,
-	order_id			NVARCHAR(50),
-	order_item_id		INT,
-	product_id			NVARCHAR(50),
-	seller_id			NVARCHAR(50),
-	shipping_limit_date DATETIME2,
-	price				DECIMAL(10,2),
-	freight_value		DECIMAL(10,2),
-	total_value			AS (CAST(price + freight_value AS DECIMAL(10,2))),
-	dwh_create_date		DATETIME2 DEFAULT GETDATE()
+	order_id					NVARCHAR(50),
+	order_item_id				INT,
+	product_id					NVARCHAR(50),
+	seller_id					NVARCHAR(50),
+	shipping_limit_date			DATETIME2(0),
+	price						DECIMAL(10,2),
+	freight_value				DECIMAL(10,2),
+	total_value					AS (CAST(price + freight_value AS DECIMAL(10,2))),
+	dwh_create_date				DATETIME2(0) DEFAULT GETDATE()
 );
 
 
@@ -58,13 +55,12 @@ IF OBJECT_ID ('silver.order_payments' , 'U') IS NOT NULL
 	DROP TABLE silver.order_payments;
 
 CREATE TABLE silver.order_payments (
-	payment_key INT IDENTITY(1,1) PRIMARY KEY,
 	order_id				NVARCHAR(50),
 	payment_sequential		INT,
-	payment_type			NVARCHAR(30),
+	payment_type			NVARCHAR(20),
 	payment_installments	INT,
 	payment_value			DECIMAL(10,2),
-	dwh_create_date			DATETIME2 DEFAULT GETDATE()
+	dwh_create_date			DATETIME2(0) DEFAULT GETDATE()
 );
 
 
@@ -72,15 +68,14 @@ IF OBJECT_ID ('silver.order_reviews' , 'U') IS NOT NULL
 	DROP TABLE silver.order_reviews;
 
 CREATE TABLE silver.order_reviews (
-	review_key				INT IDENTITY(1,1) PRIMARY KEY,
 	review_id				NVARCHAR(50),
 	order_id				NVARCHAR(50),
 	review_score			INT,
 	review_comment_title	NVARCHAR(MAX),
 	review_comment_message	NVARCHAR(MAX),
-	review_creation_date	DATETIME2,
-	review_answer_timestamp DATETIME2,
-	dwh_create_date			DATETIME2 DEFAULT GETDATE()
+	review_creation_date	DATETIME2(0),
+	review_answer_timestamp DATETIME2(0),
+	dwh_create_date			DATETIME2(0) DEFAULT GETDATE()
 );
 
 
@@ -91,12 +86,12 @@ CREATE TABLE silver.orders_info (
 	order_id						NVARCHAR(50),
 	customer_id						NVARCHAR(50),
 	order_status					NVARCHAR(30),
-	order_purchase_timestamp		DATETIME2,
-	order_approved_at				DATETIME2,
-	order_delivered_carrier_date	DATETIME2,
-	order_delivered_customer_date	DATETIME2,
-	order_estimated_delivery_date	DATETIME2,
-	dwh_create_date					DATETIME2 DEFAULT GETDATE()
+	order_purchase_timestamp		DATETIME2(0),
+	order_approved_at				DATETIME2(0),
+	order_delivered_carrier_date	DATETIME2(0),
+	order_delivered_customer_date	DATETIME2(0),
+	order_estimated_delivery_date	DATETIME2(0),
+	dwh_create_date					DATETIME2(0) DEFAULT GETDATE()
 );
 
 
@@ -105,7 +100,7 @@ IF OBJECT_ID ('silver.products_info' , 'U') IS NOT NULL
 
 CREATE TABLE silver.products_info (
 	product_id					NVARCHAR(50),
-	product_category_name		NVARCHAR(100),
+	product_category_name		NVARCHAR(50),
 	product_name_length			INT,
 	product_description_lenght	INT,
 	product_photos_qty			INT,
@@ -113,7 +108,7 @@ CREATE TABLE silver.products_info (
 	product_length_cm			INT,
 	product_height_cm			INT,
 	product_width_cm			INT,
-	dwh_create_date				DATETIME2 DEFAULT GETDATE()
+	dwh_create_date				DATETIME2(0) DEFAULT GETDATE()
 );
 
 
@@ -123,10 +118,9 @@ IF OBJECT_ID ('silver.sellers_info' , 'U') IS NOT NULL
 CREATE TABLE silver.sellers_info (
 	seller_id				NVARCHAR(50),
 	seller_zip_code_prefix	INT,
-	seller_city				NVARCHAR(100),
-	seller_state			NVARCHAR(100),
-	state_code				NVARCHAR(5),
-	dwh_create_date			DATETIME2 DEFAULT GETDATE()
+	seller_city				NVARCHAR(50),
+	seller_state			NVARCHAR(2),
+	dwh_create_date			DATETIME2(0) DEFAULT GETDATE()
 );
 
 
@@ -134,7 +128,20 @@ IF OBJECT_ID ('silver.product_category_name_translation' , 'U') IS NOT NULL
 	DROP TABLE silver.product_category_name_translation;
 
 CREATE TABLE silver.product_category_name_translation (
-	product_category_name			NVARCHAR(100),
-	product_category_name_english	NVARCHAR(100),
-	dwh_create_date					DATETIME2 DEFAULT GETDATE()
+	product_category_name			NVARCHAR(50),
+	product_category_name_english	NVARCHAR(50),
+	dwh_create_date					DATETIME2(0) DEFAULT GETDATE()
+);
+
+
+IF OBJECT_ID ('silver.state_centers' , 'U') IS NOT NULL
+	DROP TABLE silver.state_centers;
+
+CREATE TABLE silver.state_centers (
+		state_code			NVARCHAR(2) PRIMARY KEY,
+		state_name			NVARCHAR(50),
+		region_name			NVARCHAR(20),
+		avg_lat				DECIMAL(9,6),
+		avg_lng				DECIMAL(9,6),
+		dwh_create_date		DATETIME2(0) DEFAULT GETDATE()
 );
