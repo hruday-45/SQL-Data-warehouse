@@ -34,16 +34,15 @@ Which product categories contribute the most to total revenue, and how do their 
 ## 📌 Key Metrics
 | Metric | Value |
 |------|------|
-| Total Categories Analyzed | 70+ |
+| Total Categories Analyzed | 74 |
 | Top Revenue Category | `beleza_saude` |
-| Highest AOV Category (Top 5) | `relogios_presentes` |
+| Highest AOV Category | `pcs` |
 
 ---
 
 ## 🔍 Key Insights
 - **`beleza_saude`** leads in total revenue, driven by high order volume
-- **`relogios_presentes`** generates the highest AOV among top categories, indicating premium purchases
-- **`cama_mesa_banho`** and **`esporte_lazer`** balance strong revenue with moderate order values
+- **`pcs`** generates the highest AOV among top categories, indicating premium purchases
 - Categories with higher AOV tend to have **lower order volume**, suggesting targeted, high-value purchases
 
 ---
