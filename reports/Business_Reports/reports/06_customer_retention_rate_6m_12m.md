@@ -20,7 +20,7 @@ What percentage of customers return to make another purchase within **6 months**
 |------|------|
 | Gold | `gold.dim_orders` |
 | Gold | `gold.dim_customers` |
-| Gold (Temp) | `gold.bridge_customer_orders` |
+| Gold (Temp Table) | `gold.bridge_customer_orders` |
 
 ---
 
