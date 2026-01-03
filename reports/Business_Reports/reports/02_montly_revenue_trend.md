@@ -50,8 +50,7 @@ How does revenue and order volume trend over time on a monthly basis?
 
 ---
 
-## 📊 Sample Output
-*(Monthly trend – full output shown below)*
+## 📊 Output
 
 <details>
 <summary>📊 Click to expand monthly revenue trend</summary>
