@@ -16,7 +16,7 @@ How does revenue and order volume trend over time on a monthly basis?
 ---
 
 ## 🧩 Data Sources
-| Layer | Table |
+| Layer | View |
 |------|------|
 | Gold | `gold.fact_sales` |
 | Gold | `gold.dim_date` |
@@ -95,9 +95,9 @@ How does revenue and order volume trend over time on a monthly basis?
 ---
 
 ## 🧱 SQL Reference
-📄 `sql/business/monthly_revenue_trend.sql`
 
 ```sql
+-- Monthly Revenue Trend
 SELECT 
     d.year,
     d.month,
@@ -105,7 +105,6 @@ SELECT
     SUM(f.total_product_value) AS monthly_revenue,
     COUNT(DISTINCT f.order_key) AS monthly_order_count
 FROM gold.fact_sales f
-LEFT JOIN gold.dim_date d 
-    ON f.order_purchase_timestamp = d.date
+LEFT JOIN gold.dim_date d ON f.order_purchase_timestamp = d.date
 GROUP BY d.year, d.month, d.month_name
 ORDER BY d.year DESC, d.month DESC;
