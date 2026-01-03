@@ -41,7 +41,7 @@ This is a **foundational CXO-level metric** used in growth and product analytics
 ## 📌 Sample Output
 
 | Cohort Month | Months Since First Purchase | Active Customers | Cohort Size | Retention % |
-|-------------|----------------------------|-----------------|------------|------------|
+|-------------|----------------------------:|-----------------:|------------:|------------:|
 | 201609 | 0 | 4 | 4 | 100.00 |
 | 201610 | 0 | 321 | 321 | 100.00 |
 | 201610 | 6 | 1 | 321 | 0.31 |
