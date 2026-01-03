@@ -42,7 +42,7 @@ For each customer state:
 | AL | 411 | 92,257.08 | **224.47** |
 | PA | 970 | 206,946.70 | **213.35** |
 
-📁 **Full output:** `/reports/business/top_product_categories.csv`
+📁 **Full output:** `reports/Business_Reports/full_output/08_AOV_by_customer_state.csv`
 
 ---
 
