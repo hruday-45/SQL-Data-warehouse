@@ -64,7 +64,6 @@ How many customers made **only one purchase** versus **multiple purchases**, and
 ---
 
 ## 🧱 SQL Reference
-📄 `sql/customer_analytics/one_time_vs_repeat_customers.sql`
 
 ```sql
 WITH CustomerOrders AS (
