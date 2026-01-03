@@ -65,7 +65,6 @@ For each customer state:
 ---
 
 ## 🧱 SQL Reference
-📄 `sql/business/average_order_value_by_state.sql`
 
 ```sql
 SELECT 
