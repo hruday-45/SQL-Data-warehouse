@@ -1,6 +1,6 @@
 /********************************************************************************
 Report: Product categories that contributed the highest revenue and profit.
-Source Tables: gold.fact_sales, gold.fact_products
+Source Views: gold.fact_sales, gold.fact_products
 Created: 2026-01-03
 ***********************************************************************************/
 
