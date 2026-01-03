@@ -260,7 +260,7 @@ HAVING COUNT(*) > 1;
 -- 2. CATEGORIZATION COMPLETENESS
 -- ----------------------------------------------------------------------------
 -- Goal: Identify products without a valid business category.
--- Expectation: Minimal count (representing only the '-1' placeholder).
+-- Expectation: Minimal count (only the '-1' placeholder).
 -- ----------------------------------------------------------------------------
 SELECT 
     product_category_name,
