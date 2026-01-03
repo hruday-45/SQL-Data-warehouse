@@ -51,7 +51,7 @@ This analysis helps identify sellers whose fulfillment performance may negativel
 | 1646 | 1 | 33.00 | 1 |
 | 2293 | 2 | 23.50 | 2 |
 
-📁 **Full output:** `reports/Business_Reports/full_output/03_top_product_categories_by_revenue_&_order_value.csv`
+📁 **Full output:** `reports/Delivery_&_Logistics_Performance/full_output/04_seller_wise_avg_delivery_delay.csv`
 
 ---
 
