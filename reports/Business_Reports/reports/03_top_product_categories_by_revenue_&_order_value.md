@@ -16,7 +16,7 @@ Which product categories contribute the most to total revenue, and how do their 
 ---
 
 ## 🧩 Data Sources
-| Layer | Table |
+| Layer | View |
 |------|------|
 | Gold | `gold.fact_sales` |
 | Gold | `gold.dim_products` |
@@ -76,7 +76,6 @@ Which product categories contribute the most to total revenue, and how do their 
 ---
 
 ## 🧱 SQL Reference
-📄 `sql/business/top_product_categories.sql`
 
 ```sql
 SELECT 
