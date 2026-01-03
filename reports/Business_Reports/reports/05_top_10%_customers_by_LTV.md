@@ -66,6 +66,7 @@ Who are the top 10% of customers by total lifetime spend, and how concentrated i
 </details>
 
 📁 **Full output:** `/reports/business/top_product_categories.csv`
+
 ---
 
 ## 🧪 Data Quality Checks
