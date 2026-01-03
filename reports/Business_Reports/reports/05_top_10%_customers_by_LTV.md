@@ -52,7 +52,6 @@ Who are the top 10% of customers by total lifetime spend, and how concentrated i
 ---
 
 ## 📊 Sample Output
-*(Preview of top LTV customers — truncated for readability)*
 
 | customer_unique_id | total_spend |
 |-------------------|-------------|
@@ -62,8 +61,6 @@ Who are the top 10% of customers by total lifetime spend, and how concentrated i
 | ff4159b92c40ebe40454e3e6a7c35ed6 | 6,726.66 |
 | eebb5dda148d3893cdaf5b5ca3040ccb | 4,764.34 |
 | .... | .... |
-
-</details>
 
 📁 **Full output:** `/reports/business/top_product_categories.csv`
 
