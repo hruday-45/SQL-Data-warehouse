@@ -119,7 +119,7 @@ SELECT
     CAST(ROW_NUMBER() OVER(ORDER BY p.product_id) AS INT) AS product_key,                -- surrogate key
     p.product_id,                                                           -- Natural business key
 
-    -- Handling names with are not present in the translation table
+    -- Handling names which are not present in the translation table
     ISNULL(p.product_category_name, 'outros') AS product_category_name,
     ISNULL(t.product_category_name_english, 'others') AS product_category_name_english,
     
