@@ -52,7 +52,7 @@ What percentage of customers return to make more than one purchase, and how stro
 
 ---
 
-## 📊 Sample Output
+## 📊 Output
 
 | total_unique_customers | repeat_buyers | retention_rate_percentage |
 |------------------------|---------------|---------------------------|
