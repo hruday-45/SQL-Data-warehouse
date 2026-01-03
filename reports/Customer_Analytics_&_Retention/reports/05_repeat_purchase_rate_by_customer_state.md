@@ -38,7 +38,7 @@ Which **customer states have the highest repeat purchase rate**, indicating stro
 
 ---
 
-## 📌 Key Metrics (Top States)
+## 📌 Key Metrics
 
 <details>
 <summary><strong>Click to view state-level repeat purchase rates</strong></summary>
