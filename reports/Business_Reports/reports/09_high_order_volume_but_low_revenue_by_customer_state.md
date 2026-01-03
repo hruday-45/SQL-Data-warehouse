@@ -76,7 +76,6 @@ Results are ordered by **highest order volume**.
 ---
 
 ## 🧱 SQL Reference
-📄 `sql/business/high_volume_low_revenue_states.sql`
 
 ```sql
 SELECT 
