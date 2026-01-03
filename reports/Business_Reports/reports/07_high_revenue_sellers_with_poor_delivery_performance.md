@@ -43,12 +43,12 @@ This report focuses only on sellers who:
 ## 📌 Key Metrics (Sample Sellers)
 
 | seller_id | city | state | total_orders | total_revenue | avg_delivery_time (days) | late_orders | late_delivery_rate (%) |
-|----------|------|-------|--------------|---------------|--------------------------|-------------|------------------------|
-| f7ba60f8c3f99e7ee4042fdef03b70c4 | São Bernardo do Campo | SP | 218 | 69,516.87 | 13.34 | 34 | **15.60** |
-| 8160255418d5aaa7dbdc9f4c64ebda44 | Ibitinga | SP | 380 | 52,138.10 | 16.55 | 72 | **18.95** |
-| 06a2c3af7b3aee5d69171b0e14f0ee87 | São Luís | MA | 389 | 47,377.06 | 17.60 | 91 | **23.39** |
-| 712e6ed8aa4aa1fa65dab41fed5737e4 | Videira | SC | 77 | 44,411.32 | 24.60 | 17 | **22.08** |
-| 88460e8ebdecbfecb5f9601833981930 | Maringá | PR | 246 | 31,908.48 | 17.97 | 53 | **21.54** |
+|----------|------|-------|--------------:|---------------:|--------------------------:|-------------:|------------------------:|
+| f7ba60f8c3f99e7ee4042fdef03b70c4 | sao bernardo do campo | SP | 218 | 69,516.87 | 13.34 | 34 | **15.60** |
+| 8160255418d5aaa7dbdc9f4c64ebda44 | ibitinga | SP | 380 | 52,138.10 | 16.55 | 72 | **18.95** |
+| 06a2c3af7b3aee5d69171b0e14f0ee87 | sao luis | MA | 389 | 47,377.06 | 17.60 | 91 | **23.39** |
+| 712e6ed8aa4aa1fa65dab41fed5737e4 | videira | SC | 77 | 44,411.32 | 24.60 | 17 | **22.08** |
+| 88460e8ebdecbfecb5f9601833981930 | maringa | PR | 246 | 31,908.48 | 17.97 | 53 | **21.54** |
 
 📁 **Full output:** `reports/Business_Reports/full_output/07_high_revenue_sellers_with_poor_delivery_performance.csv`
 
