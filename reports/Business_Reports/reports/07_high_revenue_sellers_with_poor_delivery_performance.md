@@ -50,7 +50,7 @@ This report focuses only on sellers who:
 | 712e6ed8aa4aa1fa65dab41fed5737e4 | Videira | SC | 77 | 44,411.32 | 24.60 | 17 | **22.08** |
 | 88460e8ebdecbfecb5f9601833981930 | Maringá | PR | 246 | 31,908.48 | 17.97 | 53 | **21.54** |
 
-📁 **Full output:** `/reports/business/top_product_categories.csv`
+📁 **Full output:** `reports/Business_Reports/full_output/07_high_revenue_sellers_with_poor_delivery_performance.csv`
 
 ---
 
