@@ -48,10 +48,6 @@ Which product categories contribute the most to total revenue, and how do their 
 ---
 
 ## 📊 Sample Output
-*(Top 5 categories by revenue)*
-
-<details>
-<summary>📊 Click to expand category revenue breakdown</summary>
 
 | Product Category | Total Orders | Total Revenue | Avg Order Value |
 |------------------|-------------|---------------|-----------------|
@@ -61,8 +57,6 @@ Which product categories contribute the most to total revenue, and how do their 
 | esporte_lazer | 7,720 | 1,084,444.87 | 140.47 |
 | informatica_acessorios | 6,689 | 936,674.78 | 140.03 |
 | .... | .... | .... | .... |
-
-</details>
 
 📁 **Full output:** `/reports/business/top_product_categories.csv`
 
