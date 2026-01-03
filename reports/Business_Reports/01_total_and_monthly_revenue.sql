@@ -1,6 +1,6 @@
 /********************************************************************************
 Report: Total Revenue & Monthly Revenue Trend
-Source Tables: gold.fact_sales, gold.dim_date
+Source Views: gold.fact_sales, gold.dim_date
 Created: 2026-01-03
 ***********************************************************************************/
 
