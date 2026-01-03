@@ -48,7 +48,7 @@ This is a **foundational CXO-level metric** used in growth and product analytics
 | 201610 | 9 | 1 | 321 | 0.31 |
 | 201610 | 11 | 1 | 321 | 0.31 |
 
-📁 **Full output:** `/reports/business/top_product_categories.csv`
+📁 **Full output:** `reports/Customer_Analytics_&_Retention/full_output/03_customer_cohort_retention.csv`
 
 ---
 
