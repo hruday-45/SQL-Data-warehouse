@@ -45,7 +45,7 @@ This project implements the **Medallion Architecture**, progressing through Bron
 * **Context:** Real commercial data from **100,000 orders** (2016–2018) in Brazil.
 * **Structure:** 9 interconnected tables forming a robust relational schema.
 
-## 🌎 Olist - Brazilian E-Commerce Overview
+## 🌎 E-Commerce Overview
 
 Olist is a leading Brazilian e-commerce platform that enables small and medium-sized sellers to reach millions of customers across Brazil. Founded in 2015, Olist acts as a bridge between sellers and major marketplaces, helping them manage sales, logistics, and customer experience.
 
