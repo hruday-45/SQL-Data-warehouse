@@ -58,7 +58,7 @@ Which product categories contribute the most to total revenue, and how do their 
 | informatica_acessorios | 6,689 | 936,674.78 | 140.03 |
 | .... | .... | .... | .... |
 
-📁 **Full output:** `/reports/business/top_product_categories.csv`
+📁 **Full output:** `reports/Business_Reports/full_output/03_top_product_categories_by_revenue_&_order_value.csv`
 
 ---
 
