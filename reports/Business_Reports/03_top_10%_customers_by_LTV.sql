@@ -1,6 +1,6 @@
 /********************************************************************************
 Report: Top 10% customers by lifetime value (LTV)
-Source Views: gold.fact_sales, gold.dim_date
+Source Views: gold.fact_sales, gold.dim_customers
 Created: 2026-01-03
 ***********************************************************************************/
 
