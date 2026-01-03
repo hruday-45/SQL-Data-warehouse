@@ -78,7 +78,6 @@ What are the **average customer review scores** for each product category, and w
 ---
 
 ## 🧱 SQL Reference
-📄 `sql/product_analysis/average_review_scores_by_category.sql`
 
 ```sql
 
