@@ -3,7 +3,7 @@
 ---
 
 ## 🧠 Business Question
-What is the ** average item price** for each **product category**?
+What is the **average item price** for each **product category**?
 
 ---
 
