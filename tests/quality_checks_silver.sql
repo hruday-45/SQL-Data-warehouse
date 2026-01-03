@@ -132,6 +132,7 @@ WHERE geolocation_lng NOT BETWEEN -74 AND -34;
 -- ----------------------------------------------------------------------------
 -- Goal: Verify the minimum and maximum dates to identify extreme outliers.
 -- Expectation: Reasonable start/end dates matching business operations.
+-- I found 4 orders for the year 2020 which I considered as test orders, remaining are under 2018.
 -- ----------------------------------------------------------------------------
 SELECT 
     MIN(shipping_limit_date) AS earliest_date,
