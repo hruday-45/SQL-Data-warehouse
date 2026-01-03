@@ -39,8 +39,11 @@ Results are ordered by **highest order volume**.
 
 ---
 
-## 📌 Key Metrics (High Volume, Low AOV States)
+## 📌 Key Metrics
 
+<details>
+<summary><strong>Click to view full AOV distribution</strong></summary>
+  
 | State | Total Orders | Total Revenue | State AOV |
 |------|-------------:|--------------:|----------:|
 | SP | 41,375 | 5,534,919.01 | **133.77** |
@@ -53,6 +56,25 @@ Results are ordered by **highest order volume**.
 | DF | 2,125 | 334,941.87 | **157.62** |
 | ES | 2,025 | 304,734.98 | **150.49** |
 | GO | 2,007 | 318,632.69 | **158.76** |
+| PE | 1,648 | 306,566.65 | **186.02** |
+| CE | 1,327 | 259,661.52 | **195.68** |
+| PA | 970 | 206,946.70 | **213.34** |
+| MT | 903 | 169,811.31 | **188.05** |
+| MA | 740 | 143,209.56 | **193.52** |
+| MS | 709 | 128,365.68 | **181.05** |
+| PB | 532 | 132,132.78 | **248.37** |
+| PI | 493 | 100,309.32 | **203.47** |
+| RN | 482 | 98,467.47	| **204.29** |
+| AL | 411 | 92,257.08	| **224.47** |
+| SE | 345 | 68,128.82	| **197.47** |
+| TO | 279 | 58,743.56	| **210.55** |
+| RO | 247 | 55,810.19	| **225.95** |
+| AM | 147 | 26,091.38	| **177.49** |
+| AC | 81 | 18,467.42 | **227.99** |
+| AP | 68	| 14,435.46 | **212.28** |
+| RR | 46	| 8,933.94	| **194.21** |
+
+</details>
 
 ---
 
@@ -86,7 +108,4 @@ SELECT
 FROM gold.fact_sales f
 LEFT JOIN gold.dim_customers c ON f.customer_key = c.customer_key
 GROUP BY c.customer_state
--- for states with > 2000 orders but AOV < $170
-HAVING COUNT(DISTINCT f.order_key) > 2000 
-   AND (SUM(f.total_product_value) / COUNT(DISTINCT f.order_key)) < 170
 ORDER BY total_orders DESC;
