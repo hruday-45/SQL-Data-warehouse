@@ -292,7 +292,7 @@ WITH SalesBase AS (
         oi.freight_value,
         (oi.price + oi.freight_value) AS total_product_value
     FROM silver.order_items oi
-    JOIN silver.orders_info o ON oi.order_id = o.order_id
+    LEFT JOIN silver.orders_info o ON oi.order_id = o.order_id
 ),
 PaymentAggregation AS (
     SELECT 
