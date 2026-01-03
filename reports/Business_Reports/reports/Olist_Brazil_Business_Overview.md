@@ -1,10 +1,10 @@
-# 📊Olist Brazil Business Overview
+# 📊 Olist Brazil Business Overview
 
 This repository contains an analysis of Olist Brazil's e-commerce dataset. Below is a high-level business summary based on sales, customers, and products.
 
 ---
 
-## 📌Key Business Metrics
+## 📌 Key Business Metrics
 
 | Metric | Value |
 |--------|-------|
@@ -18,7 +18,7 @@ This repository contains an analysis of Olist Brazil's e-commerce dataset. Below
 
 ---
 
-## 📝Summary
+## 📝 Summary
 
 - **Customer Base:** Olist has ~96k unique customers, with slightly more profiles in their database including inactive users.  
 - **Product Catalog:** Over 32k distinct products are available for purchase across multiple categories.  
@@ -27,7 +27,7 @@ This repository contains an analysis of Olist Brazil's e-commerce dataset. Below
 
 ---
 
-## 🔍Insights for Stakeholders
+## 🔍 Insights for Stakeholders
 
 - The average price of items suggests a mix of low- and high-ticket products.  
 - With nearly all customer profiles active, Olist has a strong foundation for marketing campaigns to increase repeat purchases.  
