@@ -50,13 +50,12 @@ Which product categories contribute the most to total revenue, and how do their 
 ## 📊 Sample Output
 
 | Product Category | Total Orders | Total Revenue | Avg Order Value |
-|------------------|-------------|---------------|-----------------|
+|------------------|-------------:|---------------:|-----------------:|
 | beleza_saude | 8,836 | 1,384,783.71 | 156.72 |
 | relogios_presentes | 5,624 | 1,285,040.70 | 228.49 |
 | cama_mesa_banho | 9,417 | 1,151,657.81 | 122.30 |
 | esporte_lazer | 7,720 | 1,084,444.87 | 140.47 |
 | informatica_acessorios | 6,689 | 936,674.78 | 140.03 |
-| .... | .... | .... | .... |
 
 📁 **Full output:** `reports/Business_Reports/full_output/03_top_product_categories_by_revenue_&_order_value.csv`
 
