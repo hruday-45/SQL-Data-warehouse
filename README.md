@@ -16,21 +16,27 @@ This project demonstrates a comprehensive data warehousing and analytics solutio
 * **Scope:** Latest-state snapshot (non-historized) for streamlined reporting.
 * **Documentation:** Comprehensive technical mapping for business and tech stakeholders.
 
-### 📈 BI: Analytics & Reporting (Data Analytics)
-**Objective:** Develop SQL-based analytics to deliver deep-dive insights into:
-* **Business Reports** 
-* **Customer Analytics & Retention** 
-* **Delivery & Logistics Performance**
-* **Orders Revenue Analysis**
-* **Payment Behavior & Risk**
-* **Product Category Intelligence**
+### 📊 Key Analytics & Insights
+This project answers critical business questions such as:
+
+- 📈 **Total Revenue, Orders & Average Order Value**
+- 👥 **Customer Growth & Unique Buyers**
+- ⭐ **Average Review Scores by Product Category**
+- 🛒 **Frequently Purchased Product Combinations**
+- 📦 **Seasonality of Top Product Categories**
+- 🚚 **Impact of Delivery Performance on Reviews**
+- 💰 **Customer Lifetime Value (LTV) & Retention Trends**
+
+Each analysis is documented in **dedicated `.md` report files** with:
+- Business question
+- SQL logic
+- Result interpretation
+- Key insights
 
 ----
 
 ## 🏗️ Data Architecture
 This project implements the **Medallion Architecture**, progressing through Bronze, Silver, and Gold layers to ensure data reliability.
-
-
 
 1.  **🥉 Bronze Layer:** Immutable landing zone. Raw data ingested "as-is" from CSV sources.
 2.  **🥈 Silver Layer:** The refinery. Data cleansing, standardization, and normalization.
@@ -62,6 +68,16 @@ The following tools were leveraged to build this end-to-end analytical solution:
 
 ---
 
+## 📌 Key Skills Demonstrated
+- Data Warehouse Design (Star Schema)
+- ETL / ELT Pipeline Development
+- Analytical SQL (joins, aggregations, window functions)
+- Data Quality & Validation
+- Performance Optimization (indexes, bridge tables)
+- Business-oriented data analysis
+
+---
+
 ## 📂 Repository Structure
 * `📁 datasets`: Placeholder for raw CSV data.
 * `📁 documents`: Project documentation including **Data Catalog**, **Data Flow**, and **Star Schema** diagrams.
@@ -87,6 +103,6 @@ I am a **B.Com (Computer Applications)** graduate from Gauthami Degree College (
 * **The Transition:** After 1.5 years as a **Trust & Safety Associate at Accenture**, I developed a sharp eye for data patterns and integrity. I am now pivoting my career into **Data Analytics**, bridging my operational experience with technical SQL expertise.
 * **My Philosophy:** I believe data is only as good as its integrity. This project reflects my commitment to building "Gold Standard" data models that businesses can trust implicitly.
 
-## 📫 Let's Connect!
-* www.linkedin.com/in/hruday-bhaskar-madanu
-* hrudaybhaskar45@gmail.com
+## 🔗 Let's Connect!
+* **LinkedIn:** www.linkedin.com/in/hruday-bhaskar-madanu
+* **Gmail:** hrudaybhaskar45@gmail.com
