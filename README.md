@@ -18,9 +18,12 @@ This project demonstrates a comprehensive data warehousing and analytics solutio
 
 ### 📈 BI: Analytics & Reporting (Data Analytics)
 **Objective:** Develop SQL-based analytics to deliver deep-dive insights into:
-* **Customer Behavior** (Segmentation & Lifecycle)
-* **Product Performance** (Revenue & Volume analysis)
-* **Sales Trends** (Temporal growth patterns)
+* **Business Reports** 
+* **Customer Analytics & Retention** 
+* **Delivery & Logistics Performance**
+* **Orders Revenue Analysis**
+* **Payment Behavior & Risk**
+* **Product Category Intelligence**
 
 ----
 
@@ -42,13 +45,19 @@ This project implements the **Medallion Architecture**, progressing through Bron
 * **Context:** Real commercial data from **100,000 orders** (2016–2018) in Brazil.
 * **Structure:** 9 interconnected tables forming a robust relational schema.
 
+## 🌎 Olist - Brazilian E-Commerce Overview
+
+Olist is a leading Brazilian e-commerce platform that enables small and medium-sized sellers to reach millions of customers across Brazil. Founded in 2015, Olist acts as a bridge between sellers and major marketplaces, helping them manage sales, logistics, and customer experience.
+
 ---
+
 ## 🛠️ Tech Stack & Tools
 The following tools were leveraged to build this end-to-end analytical solution:
 
 * **💾 SQL Server 2022**: Primary Database Engine used for the Data Warehouse (Bronze, Silver, and Gold layers).
 * **📐 Draw.io**: Used for designing the **Data Architecture** and **Star Schema** ERD.
 * **📓 Notion**: Utilized for project management, technical documentation, and tracking data mapping requirements.
+* **📝 Notepad++**: Used for lightweight text editing, inspecting raw data files, and drafting SQL scripts.
 * **🤖 Gemini AI**: Employed as a technical co-pilot for optimizing SQL queries and refining documentation logic.
 
 ---
@@ -56,6 +65,7 @@ The following tools were leveraged to build this end-to-end analytical solution:
 ## 📂 Repository Structure
 * `📁 datasets`: Placeholder for raw CSV data.
 * `📁 documents`: Project documentation including **Data Catalog**, **Data Flow**, and **Star Schema** diagrams.
+* `📁 reports`: Contains generated analysis reports, dashboards, and exportable data summaries.
 * `📁 scripts`:
     * `📁 bronze`: DDLs and Bulk Load scripts for raw ingestion.
     * `📁 silver`: DDLs and stored procedures for data refinement.
