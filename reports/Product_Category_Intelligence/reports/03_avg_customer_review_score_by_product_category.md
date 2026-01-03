@@ -39,7 +39,7 @@ What are the **average customer review scores** for each product category, and w
 
 ---
 
-## 📊 Results: Lowest-Rated Product Categories
+## 📊 Sample Output
 
 | Product Category | Total Reviews | Avg Review Score | % 1-Star Reviews |
 |------------------|--------------:|-----------------:|-----------------:|
