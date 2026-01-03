@@ -49,7 +49,7 @@ Do **higher review scores from a customer’s first order** lead to a **higher l
 <summary><strong>Click to view detailed results</strong></summary>
 
 | First Review Score | Total Customers | Repeat Customers | Repeat Rate (%) |
-|-------------------|----------------|-----------------|----------------|
+|-------------------|----------------:|-----------------:|----------------:|
 | NULL | 739 | 31 | 4.19 |
 | 1.0 | 10,963 | 321 | 2.93 |
 | 1.5 | 3 | 2 | 66.67 |
