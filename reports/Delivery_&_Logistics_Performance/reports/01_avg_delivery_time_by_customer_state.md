@@ -47,7 +47,7 @@ This helps evaluate:
 <summary><strong>Click to view state-level delivery performance</strong></summary>
 
 | State | Avg Delivery Days |
-|------|------------------|
+|------:|------------------:|
 | SP | 8 |
 | PR | 11 |
 | MG | 11 |
