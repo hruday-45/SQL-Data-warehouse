@@ -47,7 +47,7 @@ This analysis helps understand:
 <summary><strong>Click to view LTV by Acquisition Month results</strong></summary>
 
 | Acquisition Month | Customers | Total LTV | Avg LTV per Customer |
-|------------------|----------|----------|---------------------|
+|------------------|----------:|----------:|---------------------:|
 | 201609 | 3 | 259.11 | 86.37 |
 | 201610 | 305 | 54,499.15 | 178.69 |
 | 201612 | 1 | 39.24 | 39.24 |
