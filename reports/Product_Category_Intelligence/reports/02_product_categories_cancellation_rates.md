@@ -38,7 +38,7 @@ What is the **percentage of order cancellations** of **product categories**?
 
 ---
 
-## 📊 Results: Categories with Highest Cancellation Share
+## 📊 Sample Output
 
 | Product Category | Cancellations | % of Total Cancellations |
 |------------------|--------------:|--------------------------:|
