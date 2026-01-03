@@ -85,6 +85,6 @@ SELECT
                           THEN 1
                           ELSE 0 END) / COUNT(order_id) AS DECIMAL(5,2)) AS late_delivery_rate_percent
 FROM gold.dim_orders
-WHERE order_status = 'delivered' 
+WHERE order_status = 'DELIVERED' 
   AND order_delivered_customer_date IS NOT NULL 
   AND order_estimated_delivery_date IS NOT NULL;
