@@ -34,7 +34,7 @@ How many customers made **only one purchase** versus **multiple purchases**, and
 
 ---
 
-## 📌 Key Results
+## 📌 Key Metrics
 
 | Customer Segment | Total Customers |
 |------------------|----------------:|
