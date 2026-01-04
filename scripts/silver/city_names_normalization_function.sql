@@ -34,7 +34,7 @@ BEGIN
     SET @Result = @InputText COLLATE Latin1_General_100_CI_AS_SC;
 
     -- Trim + lowercase
-    SET @Result = LOWER(LTRIM(RTRIM(@Result)));
+    SET @Result = LOWER(TRIM(@Result));
 
     -- Remove hidden / non-printable characters
     SET @Result = REPLACE(@Result, CHAR(160), ' '); -- NBSP
