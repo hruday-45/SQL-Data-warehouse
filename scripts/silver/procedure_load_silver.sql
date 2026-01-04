@@ -1,6 +1,7 @@
 /*
-Notice: Before using this whole query, I request you to first execute the 
-		city_name_normalization_function.sql and then proceed with this query.
+===============================================================================
+Notice: I request you to first execute the city_name_normalization_function.sql 
+		and then proceed with this query.
 ===========================================================================
 Stored Procedure: Load Sliver Layer (Bronze ---> Silver)
 ===========================================================================
