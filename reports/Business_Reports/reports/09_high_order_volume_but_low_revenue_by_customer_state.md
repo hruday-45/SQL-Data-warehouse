@@ -78,14 +78,22 @@ Results are ordered by **highest order volume**.
 
 ---
 
+## 📊 Visualization
+
+![AOV by orders](../../../assets/AOV_By_Orders_For_The_States.png)
+![AOV by revenue](../../../assets/AOV_By_Revenue_For_The_States.png)
+
+---
+
 ## 🔍 Key Insights
+- **Paraíba (PB)** leads with the highest AOV despite moderate order volume
 - **São Paulo (SP)** dominates order volume but has the **lowest AOV**, pulling down overall revenue efficiency
 - Large markets (RJ, MG) show similar patterns: high demand, moderate spend per order
-- These regions likely rely on:
-  - Low-ticket items
-  - Heavy discounting
-  - High promotional activity
-- Small AOV improvements in these states could yield **significant revenue gains**
+- States with **lower order counts** (PR, AP) still show strong purchasing power
+- High AOV does not always correlate with high order volume
+- Indicates opportunity to:
+  - Increase customer acquisition in high-AOV regions
+  - Customize promotions for lower-volume, high-value states
 
 ---
 
