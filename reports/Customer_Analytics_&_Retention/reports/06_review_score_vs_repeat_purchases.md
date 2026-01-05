@@ -66,6 +66,12 @@ Do **higher review scores from a customer’s first order** lead to a **higher l
 
 ---
 
+## 🖼️ Visualization
+
+![Repeat customers with review score](../../../assets/Repeat_customers_and_review_score.png)
+
+---
+
 ## 🔍 Key Insights
 - Customers **without a review (NULL)** show a **higher repeat rate (4.19%)** than most scored groups
 - **5-star reviews** still have the **highest meaningful repeat rate**
