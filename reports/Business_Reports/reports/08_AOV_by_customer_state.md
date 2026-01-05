@@ -46,6 +46,11 @@ For each customer state:
 
 ---
 
+## 📊 Visualization
+
+![AOV by orders](../../../assets/AOV_By_Orders_For_The_States.png)
+![AOV by revenue](../../../assets/AOV_By_Revenue_For_The_States.png)
+
 ## 🔍 Key Insights
 - **Paraíba (PB)** leads with the highest AOV despite moderate order volume
 - States with **lower order counts** (PR, AP) still show strong purchasing power
