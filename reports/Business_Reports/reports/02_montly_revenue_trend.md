@@ -86,7 +86,6 @@ How does revenue and order volume trend over time on a monthly basis?
 ---
 
 ## 🖼️ Visualization
-The chart below highlights the strong correlation between transaction volume and revenue growth.
 
 ![Monthly Revenue Trend](../../../assets/Monthly_Revenue_Trend.png)
 
