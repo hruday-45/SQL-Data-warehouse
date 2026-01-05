@@ -75,6 +75,12 @@ How does the **average number of payment installments** vary across **customer s
 
 ---
 
+## 🖼️ Visualization
+
+![Monthly Revenue Trend](../../../assets/Avg_installments_per_customer_state.png)
+
+---
+
 ## 🔍 Key Insights
 - Northeastern states (e.g., **PB, SE, AL, RN**) show **higher average installment usage**
 - **São Paulo (SP)** has:
