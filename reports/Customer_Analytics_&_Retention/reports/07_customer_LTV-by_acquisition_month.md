@@ -76,6 +76,11 @@ This analysis helps understand:
 
 ---
 
+## 🖼️ Visualization
+
+![Customer Acquisition with LTV](../../../assets/Customer_acquisition_with_LTV.png)
+
+
 ## 🔍 Key Insights
 - **Early cohorts (2016–2017)** generally show **higher average LTV**
 - Peak average LTV observed in:
