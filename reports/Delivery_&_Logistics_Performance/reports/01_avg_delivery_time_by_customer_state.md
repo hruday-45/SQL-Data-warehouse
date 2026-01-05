@@ -80,6 +80,12 @@ This helps evaluate:
 
 ---
 
+## 🖼️ Visualization
+
+![Repeat Customers with Repeat Percentage](../../../assets/Average_delivery_time_by_state.png)
+
+---
+
 ## 🔍 Key Insights
 - **São Paulo (SP)** has the fastest delivery time at **8 days**
 - Southern and Southeastern states generally perform better
