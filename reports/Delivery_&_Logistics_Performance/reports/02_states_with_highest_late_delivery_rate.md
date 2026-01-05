@@ -81,6 +81,12 @@ Late deliveries directly affect:
 
 ---
 
+## 🖼️ Visualization
+
+![State Late Delivery Rate](../../../assets/State_late_delivery_rate.png)
+
+---
+
 ## 🔍 Key Insights
 - **Alagoas (AL)** shows the highest late delivery rate at **23.93%**
 - Northeastern states dominate the top of the list
