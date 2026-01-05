@@ -77,6 +77,14 @@ Which **customer states have the highest repeat purchase rate**, indicating stro
 
 ---
 
+## 🖼️ Visualization
+The chart below highlights the strong correlation between transaction volume and revenue growth.
+
+![Repeat Customers with Repeat Percentage](../../../assets/Repeat_Customers_with_Repeat_Percentage.png)
+![Total Customers with Repeat Percentage](../../../assets/Total_Customers_with_Repeat_Percentage.png)
+
+---
+
 ## 🔍 Key Insights
 - **MT, GO, and RJ** show the strongest repeat purchase behavior
 - Large markets like **SP and RJ** combine:
