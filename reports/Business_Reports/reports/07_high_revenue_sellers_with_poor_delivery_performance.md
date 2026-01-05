@@ -40,7 +40,7 @@ This report focuses only on sellers who:
 
 ---
 
-## 📌 Key Metrics (Sample Sellers)
+## 📌 Key Metrics (Sample Output)
 
 | seller_id | city | state | total_orders | total_revenue | avg_delivery_time (days) | late_orders | late_delivery_rate (%) |
 |----------|------|-------|--------------:|---------------:|--------------------------:|-------------:|------------------------:|
