@@ -10,7 +10,7 @@ This repository contains an analysis of Olist Brazil's e-commerce dataset. Below
 |--------|-------|
 | **Total Unique Customers** | 96,096 |
 | **Total Customer Profiles** | 99,441 |
-| **Total Products in Catalog** | 32,9521 |
+| **Total Products in Catalog** | 32,951 |
 | **Total Orders** | 98,666 |
 | **Average Price per Item Sold** | R$ 124.42 |
 | **Total Quantity of Items Sold** | 102,425 |
