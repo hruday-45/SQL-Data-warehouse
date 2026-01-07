@@ -41,19 +41,19 @@ This repository contains an analysis of Olist Brazil's e-commerce dataset. Below
 
 -- 1. Total Unique Customers who placed an order
 SELECT 'Total Customers Unique' AS metric_name, COUNT(DISTINCT customer_unique_id) AS metric_value
-FROM gold.dim_customers
+FROM gold.dim_customers WHERE customer_key <> -1
 
 UNION ALL
 
 -- 2. Total Customer Profiles (including those who haven't ordered yet)
 SELECT 'Total Customer Profiles', COUNT(customer_key)
-FROM gold.dim_customers
+FROM gold.dim_customers WHERE customer_key <> -1
 
 UNION ALL
 
 -- 3. Total Distinct Products in Catalog
 SELECT 'Total Products', COUNT(DISTINCT product_key)
-FROM gold.dim_products
+FROM gold.dim_products WHERE product_key <> -1
 
 UNION ALL
 
