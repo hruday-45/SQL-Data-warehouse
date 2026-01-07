@@ -12,9 +12,9 @@ This repository contains an analysis of Olist Brazil's e-commerce dataset. Below
 | **Total Customer Profiles** | 99,442 |
 | **Total Products in Catalog** | 32,952 |
 | **Total Orders** | 98,666 |
-| **Average Price per Item Sold** | 124.42 BRL |
+| **Average Price per Item Sold** | R$ 124.42 |
 | **Total Quantity of Items Sold** | 102,425 |
-| **Total Sales Revenue** | 14,803,808.78 BRL |
+| **Total Sales Revenue** | R$ 14,803,808.78 |
 
 ---
 
