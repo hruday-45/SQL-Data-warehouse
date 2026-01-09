@@ -21,6 +21,6 @@ including revenue, orders, customer repeat rate, and delivery health.
 ---
 
 ### 💡 Key Insights
-- Revenue shows strong seasonality with peaks in Q4.
+- Revenue shows strong seasonality with peaks from November 2017.
 - A small group of states contributes the majority of revenue.
-- Late deliveries remain a measurable operational issue.
+- Late deliveries remain a measurable operational issue which is aproximately 10% total orders.
