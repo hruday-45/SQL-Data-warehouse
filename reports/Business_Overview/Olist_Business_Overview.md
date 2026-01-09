@@ -10,7 +10,7 @@ including revenue, orders, customer repeat rate, and delivery health.
 - Repeat Customer Rate
 
 ### 🖥️ Dashboard (Tableau)
-🔗 Tableau Public: <https://public.tableau.com/app/profile/hruday.madanu/viz/Olist-BusinessOverview/Dashboard1)>
+🔗 Tableau Public: <https://public.tableau.com/app/profile/hruday.madanu/viz/Olist-BusinessOverview/Dashboard1>
 
 ![Overview Dashboard](../../assets/Olist_Business_Overview.png)
 
