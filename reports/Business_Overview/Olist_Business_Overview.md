@@ -9,7 +9,7 @@ including revenue, orders, customer repeat rate, and delivery health.
 - Total Revenue
 - Total Orders
 - Average Order Value (AOV)
-- Repeat Customer Rate
+- One-Time Buyer Rate(%)
 
 ---
 
