@@ -43,13 +43,13 @@ What **percentage of customers churn after their first order**, meaning they nev
 | Metric | Value |
 |------|------:|
 | Total Unique Customers | 95,420 |
-| Customers Churned After 1st Order | 89,631 |
-| **Churn Rate** | **93.93%** |
+| Customers Churned After 1st Order | 92507 |
+| **Churn Rate** | **96.95%** |
 
 ---
 
 ## 🔍 Key Insights
-- Nearly **94% of customers churn after their first purchase**
+- Nearly **97% of customers churn after their first purchase**
 - Confirms:
   - Extremely weak early retention
   - Revenue heavily depends on new customer acquisition
@@ -78,7 +78,7 @@ What **percentage of customers churn after their first order**, meaning they nev
 WITH CustomerStats AS (
     SELECT 
         c.customer_unique_id,
-        COUNT(f.order_key) AS total_orders
+        COUNT(DISTINCT f.order_key) AS total_orders
     FROM gold.fact_sales f
     LEFT JOIN gold.dim_customers c ON f.customer_key = c.customer_key
     GROUP BY c.customer_unique_id
