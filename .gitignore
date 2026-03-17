@@ -1,0 +1,6 @@
+# SQL specific noise
+*.log
+*.tmp
+*.sqlite
+.env
+node_modules/
